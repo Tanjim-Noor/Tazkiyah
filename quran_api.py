@@ -462,6 +462,30 @@ class QuranAPIClient:
         response = self._request(endpoint, params=params)
         return response.get("tafsirs", [])
     
+    def get_footnote(self, footnote_id: int) -> dict[str, Any] | None:
+        """
+        Get footnote content by ID.
+        
+        The API returns footnote text for translation footnotes referenced
+        in translation text as <sup foot_note=ID>N</sup>.
+        
+        Args:
+            footnote_id: Footnote ID from translation text
+            
+        Returns:
+            Footnote dictionary with 'id', 'text', 'language_name' or None
+        """
+        endpoint = f"/api/{self.API_VERSION}/foot_notes/{footnote_id}"
+        
+        try:
+            response = self._request(endpoint)
+            return response.get("foot_note")
+        except requests.HTTPError as e:
+            if e.response is not None and e.response.status_code == 404:
+                logger.debug(f"Footnote not found: {footnote_id}")
+                return None
+            raise
+    
     def get_concurrency(self) -> int:
         """Get current concurrency level (may be reduced by circuit breaker)."""
         return self.circuit_breaker.get_concurrency()

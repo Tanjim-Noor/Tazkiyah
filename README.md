@@ -43,10 +43,10 @@ python collect_quran.py --list-resources
 
 ```bash
 # Quick test: First 3 surahs
-python collect_quran.py --surah-range 1 3 --translations 131,85 --output test.jsonl
+python collect_quran.py --surah-range 1 3 --translations 20,85 --output test.jsonl
 
 # Full collection with tafsir
-python collect_quran.py --all --translations 131,85 --tafsirs 169 --output quran_complete.jsonl
+python collect_quran.py --all --translations 20,85 --tafsirs 169 --output quran_complete.jsonl
 ```
 
 ## Usage
@@ -55,16 +55,16 @@ python collect_quran.py --all --translations 131,85 --tafsirs 169 --output quran
 
 ```bash
 # Collect all surahs
-python collect_quran.py --all -t 131,85 -o quran.jsonl
+python collect_quran.py --all -t 20,85 -o quran.jsonl
 
 # Collect single surah
-python collect_quran.py --surah 2 -t 131 -o baqarah.jsonl
+python collect_quran.py --surah 2 -t 20 -o baqarah.jsonl
 
 # Collect range of surahs
-python collect_quran.py --surah-range 1 10 -t 131,85 -o first_ten.jsonl
+python collect_quran.py --surah-range 1 10 -t 20,85 -o first_ten.jsonl
 
 # Resume interrupted collection
-python collect_quran.py --all -t 131 --resume -o quran.jsonl
+python collect_quran.py --all -t 20 --resume -o quran.jsonl
 
 # Validate existing data
 python collect_quran.py --validate-only -o quran.jsonl
@@ -124,8 +124,11 @@ Single array of verses:
   "surah_name_arabic": "البقرة",
   "arabic_text": "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ...",
   "translations": {
-    "Sahih International": "Allah - there is no deity except Him...",
-    "Abdel Haleem": "God: there is no god but Him..."
+    "Saheeh International": "Allah - there is no deity except Him,[1] the Ever-Living...",
+    "M.A.S. Abdel Haleem": "God: there is no god but Him..."
+  },
+  "footnotes": {
+    "1": "i.e., no one worthy of worship except Him."
   },
   "tafsirs": {
     "Tafsir Ibn Kathir": "This is Ayat Al-Kursi..."
@@ -144,14 +147,16 @@ Single array of verses:
 }
 ```
 
+**Note:** Footnote markers in translations (e.g., `[1]`, `[2]`) reference the corresponding entries in the `footnotes` object. When using multiple translations, footnotes are prefixed with the translation name for disambiguation (e.g., `"Saheeh International:1"`).
+
 ## Popular Resource IDs
 
 ### Translations
 
 | ID | Name | Language |
 |----|------|----------|
-| 131 | Sahih International | English |
-| 85 | Abdel Haleem | English |
+| 20 | Saheeh International | English |
+| 85 | M.A.S. Abdel Haleem | English |
 | 95 | Dr. Mustafa Khattab (The Clear Quran) | English |
 | 84 | Mufti Taqi Usmani | English |
 | 20 | Pickthall | English |
@@ -178,7 +183,7 @@ Create `config.json` from `config.example.json`:
     "mode": "all"
   },
   "translations": {
-    "ids": [131, 85]
+    "ids": [20, 85]
   },
   "tafsirs": {
     "ids": [169]
@@ -238,7 +243,7 @@ The API is limiting requests. The script handles this automatically by:
 
 Use `--resume` to continue:
 ```bash
-python collect_quran.py --all -t 131 --resume -o quran.jsonl
+python collect_quran.py --all -t 20 --resume -o quran.jsonl
 ```
 
 ### Validation failures

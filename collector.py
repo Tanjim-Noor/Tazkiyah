@@ -3,6 +3,7 @@ Quran Data Collector
 
 Orchestrates data collection from the Quran Foundation API:
 - Fetches chapters and verses with translations
+- Fetches footnotes from translation text
 - Optional tafsir fetching in parallel
 - JSONL output with batch writes
 - Resume capability at chapter level
@@ -30,6 +31,9 @@ from tafsir_fetcher import TafsirFetcher
 # Configure module logger
 logger = logging.getLogger(__name__)
 
+# Regex pattern to extract footnote IDs from translation text
+FOOTNOTE_PATTERN = re.compile(r'<sup\s+foot_note=(\d+)>(\d+)</sup>')
+
 
 @dataclass
 class CollectorStats:
@@ -39,6 +43,7 @@ class CollectorStats:
     verses_collected: int = 0
     translations_included: int = 0
     tafsirs_fetched: int = 0
+    footnotes_fetched: int = 0
     errors: list[dict[str, Any]] = field(default_factory=list)
     
     def to_dict(self) -> dict[str, Any]:
@@ -48,6 +53,7 @@ class CollectorStats:
             "verses_collected": self.verses_collected,
             "translations_included": self.translations_included,
             "tafsirs_fetched": self.tafsirs_fetched,
+            "footnotes_fetched": self.footnotes_fetched,
             "error_count": len(self.errors),
         }
 
@@ -134,6 +140,7 @@ class QuranDataCollector:
         self._shutdown_requested = False
         self._chapters_cache: list[dict[str, Any]] = []
         self._translation_names: dict[int, str] = {}
+        self._footnote_cache: dict[int, str] = {}  # Cache: footnote_id -> text
         
         # Set up signal handlers for graceful shutdown
         self._setup_signal_handlers()
@@ -297,6 +304,83 @@ class QuranDataCollector:
             encoding="utf-8",
         )
     
+    def _extract_footnote_ids(self, text: str) -> list[int]:
+        """
+        Extract footnote IDs from translation text.
+        
+        Args:
+            text: Translation text with footnote markers
+            
+        Returns:
+            List of footnote IDs found in the text
+        """
+        matches = FOOTNOTE_PATTERN.findall(text)
+        return [int(match[0]) for match in matches]
+    
+    def _fetch_footnote(self, footnote_id: int) -> str:
+        """
+        Fetch footnote text from API (with caching).
+        
+        Args:
+            footnote_id: The footnote ID to fetch
+            
+        Returns:
+            Footnote text or empty string if not found
+        """
+        # Check cache first
+        if footnote_id in self._footnote_cache:
+            return self._footnote_cache[footnote_id]
+        
+        # Fetch from API
+        try:
+            footnote = self.api_client.get_footnote(footnote_id)
+            if footnote:
+                text = footnote.get("text", "")
+                self._footnote_cache[footnote_id] = text
+                self.stats.footnotes_fetched += 1
+                return text
+        except Exception as e:
+            logger.warning(f"Failed to fetch footnote {footnote_id}: {e}")
+        
+        self._footnote_cache[footnote_id] = ""
+        return ""
+    
+    def _process_translation_with_footnotes(
+        self,
+        translation_text: str,
+    ) -> tuple[str, dict[str, str]]:
+        """
+        Process translation text to extract and fetch footnotes.
+        
+        Args:
+            translation_text: Raw translation text with <sup foot_note=ID>N</sup> markers
+            
+        Returns:
+            Tuple of (clean_text, footnotes_dict)
+            - clean_text: Translation with footnote markers converted to [N]
+            - footnotes_dict: Mapping of "1", "2", etc. to footnote text
+        """
+        footnotes: dict[str, str] = {}
+        
+        # Find all footnote markers
+        matches = list(FOOTNOTE_PATTERN.finditer(translation_text))
+        
+        if not matches:
+            return translation_text, footnotes
+        
+        # Fetch all footnotes and build mapping
+        for match in matches:
+            footnote_id = int(match.group(1))
+            footnote_number = match.group(2)
+            footnote_text = self._fetch_footnote(footnote_id)
+            if footnote_text:
+                footnotes[footnote_number] = footnote_text
+        
+        # Replace <sup foot_note=ID>N</sup> with [N]
+        clean_text = FOOTNOTE_PATTERN.sub(r'[\2]', translation_text)
+        
+        return clean_text, footnotes
+    
     def _format_verse(
         self,
         verse: dict[str, Any],
@@ -316,12 +400,28 @@ class QuranDataCollector:
         """
         verse_key = verse.get("verse_key", f"{chapter['id']}:{verse.get('verse_number')}")
         
-        # Format translations
+        # Format translations and collect footnotes
         translations_dict: dict[str, str] = {}
+        all_footnotes: dict[str, str] = {}
+        
         for trans in verse.get("translations", []):
             trans_id = trans.get("resource_id")
             trans_name = self._translation_names.get(trans_id, f"Translation {trans_id}")
-            translations_dict[trans_name] = trans.get("text", "")
+            raw_text = trans.get("text", "")
+            
+            # Process translation to extract footnotes
+            clean_text, footnotes = self._process_translation_with_footnotes(raw_text)
+            translations_dict[trans_name] = clean_text
+            
+            # Merge footnotes (prefixed with translation name if multiple translations)
+            if footnotes:
+                if len(self.translations) > 1:
+                    # Prefix footnotes with translation name for disambiguation
+                    for num, text in footnotes.items():
+                        key = f"{trans_name}:{num}"
+                        all_footnotes[key] = text
+                else:
+                    all_footnotes.update(footnotes)
         
         # Build output structure
         result: dict[str, Any] = {
@@ -332,6 +432,7 @@ class QuranDataCollector:
             "surah_name_arabic": chapter.get("name_arabic", ""),
             "arabic_text": verse.get("text_uthmani", ""),
             "translations": translations_dict,
+            "footnotes": all_footnotes,
         }
         
         # Add tafsirs if provided

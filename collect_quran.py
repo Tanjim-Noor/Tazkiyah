@@ -293,6 +293,7 @@ def main(
         click.echo(f"Chapters processed: {stats.chapters_processed}")
         click.echo(f"Verses collected:   {stats.verses_collected}")
         click.echo(f"Translations:       {stats.translations_included}")
+        click.echo(f"Footnotes fetched:  {stats.footnotes_fetched}")
         click.echo(f"Tafsirs fetched:    {stats.tafsirs_fetched}")
         click.echo(f"Errors:             {len(stats.errors)}")
         click.echo(f"Output file:        {output_path}")
