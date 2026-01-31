@@ -325,6 +325,42 @@ Run validation to check data:
 python validate_data.py quran_data.jsonl -v
 ```
 
+## RAG Pipeline
+
+After preparing chunks, use the RAG pipeline to query Quranic knowledge with AI:
+
+### Quick Start
+
+```bash
+# Index chunks into ChromaDB
+python -m rag.index_chunks fatiha.chunks.jsonl
+
+# Launch web chat UI
+python -m rag.chat_ui
+
+# Or use terminal chat
+python -m rag.chat
+
+# Or single query
+python -m rag.query_rag "What is the meaning of Bismillah?"
+```
+
+### RAG Architecture
+
+```
+Chunks JSONL → Embeddings (nomic-v2-moe) → ChromaDB → Retrieval → LLM (gemma3:4b) → Answer
+```
+
+### Configuration
+
+Edit `rag/config.py` to customize:
+- **TOP_K**: Number of documents to retrieve (default: 5)
+- **LLM_MODEL**: Ollama model (default: gemma3:4b)
+- **LLM_TEMPERATURE**: 0=factual, 1=creative (default: 0.3)
+- **RAG_PROMPT_TEMPLATE**: Custom prompt template
+
+See [rag/README.md](rag/README.md) for full documentation.
+
 ## Project Structure
 
 ```
@@ -343,7 +379,16 @@ Tazkiyah/
 ├── chunk_processor.py    # Chunk processing logic
 │
 ├── validate_data.py      # Validation utility
-└── convert_to_json.py    # JSONL → JSON converter
+├── convert_to_json.py    # JSONL → JSON converter
+│
+└── rag/                  # RAG Pipeline
+    ├── config.py         # Configuration (models, retrieval, prompts)
+    ├── rag_pipeline.py   # Core TazkiyahRAG class
+    ├── index_chunks.py   # Index chunks CLI
+    ├── query_rag.py      # Query CLI
+    ├── chat.py           # Terminal chat
+    ├── chat_ui.py        # Gradio web UI
+    └── README.md         # RAG documentation
 ```
 
 ## License

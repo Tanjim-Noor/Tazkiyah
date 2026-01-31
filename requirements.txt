@@ -1,14 +1,28 @@
-# Quran Data Collection Script - Dependencies
+# Tazkiyah - Quran RAG Platform
 # Install with: pip install -r requirements.txt
 
-# HTTP requests with connection pooling and retry support
-# Used for all API calls to Quran Foundation API
-requests
+# ============================================
+# Data Collection
+# ============================================
+requests                    # HTTP client for Quran API
+tqdm                        # Progress bars
 
-# Fast, extensible progress bar for Python
-# Used for nested progress bars (chapters → verses)
-tqdm
+# ============================================
+# RAG Pipeline (LangChain + Ollama)
+# ============================================
+langchain                   # Core LangChain framework
+langchain-ollama            # Ollama integration (embeddings + LLM)
+langchain-chroma            # ChromaDB vector store integration
 
-# Python CLI toolkit for building command-line interfaces
-# Used for argument parsing and user interaction
-click
+# ============================================
+# CLI and UI
+# ============================================
+click                       # Command-line interface
+rich                        # Beautiful terminal output
+gradio                      # Web UI for chat interface
+
+# ============================================
+# Utilities
+# ============================================
+numpy                       # Numerical operations
+beautifulsoup4              # HTML parsing for chunk preparation
