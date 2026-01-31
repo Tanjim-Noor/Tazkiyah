@@ -7,11 +7,13 @@ A Python CLI tool for collecting Quran data from the [Quran Foundation API](http
 - 📖 **Complete Quran Collection** - All 114 surahs, 6236 verses
 - 🌍 **Multiple Translations** - Support for 100+ translations
 - 📚 **Tafsir Integration** - Optional commentary from major tafsir sources
+- 📝 **Footnote Extraction** - Automatic footnote fetching and linking
 - ⚡ **Parallel Processing** - Configurable concurrent tafsir fetching
 - 💾 **JSONL Output** - Streaming format with resume capability
 - 🔄 **Resume Support** - Continue interrupted collections
 - 🛡️ **Rate Limiting** - Built-in circuit breaker and backoff
 - ✅ **Validation** - Verify data completeness and integrity
+- 🧹 **RAG Chunk Preparation** - Clean HTML, format text for embeddings
 
 ## Quick Start
 
@@ -220,6 +222,76 @@ python validate_data.py quran_data.jsonl -v  # verbose
 python validate_data.py quran_data.jsonl -o report.txt
 ```
 
+### Prepare RAG Chunks
+
+Transform raw collected data into clean, embedding-ready chunks:
+
+```bash
+# Preview chunks before processing
+python prepare_chunks.py quran_data.jsonl --preview 3
+
+# Show input statistics
+python prepare_chunks.py quran_data.jsonl --stats-only
+
+# Full processing with structured format
+python prepare_chunks.py quran_data.jsonl -o chunks.jsonl
+
+# Minimal format with tafsir truncation (good for embeddings)
+python prepare_chunks.py quran_data.jsonl -o chunks.jsonl --chunk-format minimal --max-tafsir 2000
+
+# Skip Arabic text and tafsir (translations only)
+python prepare_chunks.py quran_data.jsonl -o chunks.jsonl --no-arabic --no-tafsir
+```
+
+#### Chunk Processor Options
+
+| Option | Description |
+|--------|-------------|
+| `--chunk-format {structured,prose,minimal}` | Output format style (default: structured) |
+| `--output-format {jsonl,json,txt}` | File format (default: jsonl) |
+| `--inline-footnotes / --no-inline-footnotes` | Inline footnotes in text (default: inline) |
+| `--max-tafsir N` | Truncate tafsir to N characters |
+| `--no-arabic` | Exclude Arabic text from chunks |
+| `--no-tafsir` | Exclude tafsir from chunks |
+| `--no-clean-html` | Keep HTML tags (not recommended) |
+| `--preview N` | Preview first N chunks without writing |
+| `--stats-only` | Show input statistics only |
+
+#### Chunk Formats
+
+- **structured** - Sectioned with headers (`=== Verse 1:1 ===`), best for readability
+- **prose** - Flowing paragraph style, natural reading
+- **minimal** - Compact format optimized for vector embeddings
+
+#### Chunk Output Schema
+
+```json
+{
+  "id": "2:255",
+  "text": "=== Verse 2:255 - Al-Baqarah ===\n\nArabic:\nٱللَّهُ لَآ إِلَـٰهَ...",
+  "metadata": {
+    "verse_id": "2:255",
+    "surah_number": 2,
+    "verse_number": 255,
+    "surah_name": "Al-Baqarah",
+    "juz": 3,
+    "hizb": 5,
+    "page": 42,
+    "revelation_place": "madinah"
+  },
+  "arabic_text": "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ...",
+  "translations": {
+    "Saheeh International": "Allah - there is no deity except Him..."
+  },
+  "tafsirs": {
+    "Ibn Kathir (Abridged)": "This is Ayat Al-Kursi..."
+  },
+  "footnotes": {
+    "1": "i.e., no one worthy of worship except Him."
+  }
+}
+```
+
 ## Rate Limiting & Circuit Breaker
 
 The script includes built-in protection against rate limiting:
@@ -257,14 +329,19 @@ python validate_data.py quran_data.jsonl -v
 
 ```
 Tazkiyah/
-├── SETUP.md              # Setup instructions
 ├── README.md             # This file
+├── SETUP.md              # Setup instructions
 ├── requirements.txt      # Dependencies
 ├── config.example.json   # Configuration template
-├── collect_quran.py      # Main CLI
+│
+├── collect_quran.py      # Main collection CLI
 ├── quran_api.py          # API client
-├── collector.py          # Data collection
+├── collector.py          # Data collection logic
 ├── tafsir_fetcher.py     # Parallel tafsir fetching
+│
+├── prepare_chunks.py     # RAG chunk preparation CLI
+├── chunk_processor.py    # Chunk processing logic
+│
 ├── validate_data.py      # Validation utility
 └── convert_to_json.py    # JSONL → JSON converter
 ```
