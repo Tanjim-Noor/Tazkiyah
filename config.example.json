@@ -1,0 +1,81 @@
+{
+  "_comment": "Quran Data Collection Configuration",
+  "_usage": "Copy this file to config.json and customize as needed",
+  
+  "surahs": {
+    "_comment": "Specify which surahs to collect",
+    "mode": "all",
+    "_mode_options": ["all", "single", "range", "list"],
+    "single": 1,
+    "range_start": 1,
+    "range_end": 114,
+    "list": [1, 2, 3, 36, 67, 112, 113, 114]
+  },
+  
+  "translations": {
+    "_comment": "Translation IDs to include. Use --list-resources to see available options",
+    "ids": [131, 85],
+    "_popular_ids": {
+      "131": "Sahih International (English)",
+      "85": "Abdel Haleem (English)",
+      "20": "Pickthall (English)",
+      "22": "Yusuf Ali (English)",
+      "84": "Mufti Taqi Usmani (English)",
+      "95": "Dr. Mustafa Khattab (The Clear Quran)"
+    }
+  },
+  
+  "tafsirs": {
+    "_comment": "Tafsir IDs to include (optional). Leave empty to skip tafsir collection",
+    "ids": [],
+    "_popular_ids": {
+      "169": "Tafsir Ibn Kathir (English)",
+      "93": "Tafsir al-Jalalayn (Arabic)",
+      "91": "Maariful Quran (English)",
+      "168": "Tafsir al-Tabari (Arabic)"
+    }
+  },
+  
+  "output": {
+    "file": "quran_data.jsonl",
+    "format": "jsonl",
+    "_format_options": ["jsonl", "json"],
+    "_comment": "jsonl is recommended for large datasets and resume capability"
+  },
+  
+  "api": {
+    "base_url": "https://api.quran.com",
+    "rate_limit_delay": 0.3,
+    "_comment_delay": "Minimum seconds between requests (0.3 recommended)",
+    "timeout_connect": 5,
+    "timeout_read": 30,
+    "max_retries": 3
+  },
+  
+  "performance": {
+    "concurrency": 3,
+    "_comment_concurrency": "Number of parallel threads for tafsir fetching (1-10)",
+    "batch_size": 50,
+    "_comment_batch_size": "Number of verses to buffer before writing to file",
+    "per_page": 50,
+    "_comment_per_page": "Verses per API request (max 50)"
+  },
+  
+  "circuit_breaker": {
+    "consecutive_failures_threshold": 5,
+    "pause_duration_seconds": 60,
+    "concurrency_reduction_factor": 0.5,
+    "_comment": "After 5 consecutive 429 errors, pause 60s and reduce concurrency by 50%"
+  },
+  
+  "include_metadata": true,
+  "_metadata_fields": [
+    "juz_number",
+    "page_number",
+    "hizb_number",
+    "rub_el_hizb_number",
+    "ruku_number",
+    "manzil_number",
+    "sajdah_number"
+  ]
+}

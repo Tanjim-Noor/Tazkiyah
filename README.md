@@ -1,0 +1,277 @@
+# Quran Data Collection Script
+
+A Python CLI tool for collecting Quran data from the [Quran Foundation API](https://quran.foundation). Designed for RAG (Retrieval-Augmented Generation) systems and AI-powered Quranic applications.
+
+## Features
+
+- 📖 **Complete Quran Collection** - All 114 surahs, 6236 verses
+- 🌍 **Multiple Translations** - Support for 100+ translations
+- 📚 **Tafsir Integration** - Optional commentary from major tafsir sources
+- ⚡ **Parallel Processing** - Configurable concurrent tafsir fetching
+- 💾 **JSONL Output** - Streaming format with resume capability
+- 🔄 **Resume Support** - Continue interrupted collections
+- 🛡️ **Rate Limiting** - Built-in circuit breaker and backoff
+- ✅ **Validation** - Verify data completeness and integrity
+
+## Quick Start
+
+### 1. Setup Virtual Environment
+
+```powershell
+# Windows (PowerShell)
+cd "d:\Work\Quran Project\Tazkiyah"
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+```bash
+# Linux / macOS
+cd /path/to/Tazkiyah
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. List Available Resources
+
+```bash
+python collect_quran.py --list-resources
+```
+
+### 3. Collect Data
+
+```bash
+# Quick test: First 3 surahs
+python collect_quran.py --surah-range 1 3 --translations 131,85 --output test.jsonl
+
+# Full collection with tafsir
+python collect_quran.py --all --translations 131,85 --tafsirs 169 --output quran_complete.jsonl
+```
+
+## Usage
+
+### Basic Commands
+
+```bash
+# Collect all surahs
+python collect_quran.py --all -t 131,85 -o quran.jsonl
+
+# Collect single surah
+python collect_quran.py --surah 2 -t 131 -o baqarah.jsonl
+
+# Collect range of surahs
+python collect_quran.py --surah-range 1 10 -t 131,85 -o first_ten.jsonl
+
+# Resume interrupted collection
+python collect_quran.py --all -t 131 --resume -o quran.jsonl
+
+# Validate existing data
+python collect_quran.py --validate-only -o quran.jsonl
+```
+
+### CLI Options
+
+| Option | Short | Description |
+|--------|-------|-------------|
+| `--all` | | Collect all 114 surahs |
+| `--surah N` | `-s N` | Collect specific surah (1-114) |
+| `--surah-range START END` | `-r` | Collect range of surahs |
+| `--translations IDS` | `-t` | Comma-separated translation IDs |
+| `--tafsirs IDS` | `-T` | Comma-separated tafsir IDs (optional) |
+| `--output FILE` | `-o` | Output file path |
+| `--output-format {jsonl,json}` | `-f` | Output format (default: jsonl) |
+| `--concurrency N` | `-c` | Parallel threads for tafsir (1-10) |
+| `--batch-size N` | `-b` | Buffer size before writing (default: 50) |
+| `--resume` | | Resume from existing file |
+| `--no-metadata` | | Exclude verse metadata |
+| `--config FILE` | | Load from config file |
+| `--list-resources` | | Show available translations/tafsirs |
+| `--validate-only` | | Validate existing file |
+| `--verbose` | `-v` | Verbose output |
+| `--debug` | | Debug output |
+
+## Output Format
+
+### JSONL (Default)
+
+Each line is a JSON object:
+
+```json
+{"verse_id": "1:1", "surah_number": 1, "verse_number": 1, ...}
+{"verse_id": "1:2", "surah_number": 1, "verse_number": 2, ...}
+```
+
+### JSON
+
+Single array of verses:
+
+```json
+[
+  {"verse_id": "1:1", ...},
+  {"verse_id": "1:2", ...}
+]
+```
+
+### Verse Schema
+
+```json
+{
+  "verse_id": "2:255",
+  "surah_number": 2,
+  "verse_number": 255,
+  "surah_name": "Al-Baqarah",
+  "surah_name_arabic": "البقرة",
+  "arabic_text": "ٱللَّهُ لَآ إِلَـٰهَ إِلَّا هُوَ ٱلْحَىُّ ٱلْقَيُّومُ...",
+  "translations": {
+    "Sahih International": "Allah - there is no deity except Him...",
+    "Abdel Haleem": "God: there is no god but Him..."
+  },
+  "tafsirs": {
+    "Tafsir Ibn Kathir": "This is Ayat Al-Kursi..."
+  },
+  "metadata": {
+    "juz": 3,
+    "page": 42,
+    "hizb": 5,
+    "rub_el_hizb": 17,
+    "ruku": 35,
+    "manzil": 1,
+    "sajdah": null,
+    "revelation_place": "madinah",
+    "revelation_order": 87
+  }
+}
+```
+
+## Popular Resource IDs
+
+### Translations
+
+| ID | Name | Language |
+|----|------|----------|
+| 131 | Sahih International | English |
+| 85 | Abdel Haleem | English |
+| 95 | Dr. Mustafa Khattab (The Clear Quran) | English |
+| 84 | Mufti Taqi Usmani | English |
+| 20 | Pickthall | English |
+| 22 | Yusuf Ali | English |
+
+### Tafsirs
+
+| ID | Name | Language |
+|----|------|----------|
+| 169 | Tafsir Ibn Kathir | English |
+| 91 | Maariful Quran | English |
+| 93 | Tafsir al-Jalalayn | Arabic |
+| 168 | Tafsir al-Tabari | Arabic |
+
+Run `python collect_quran.py --list-resources` for the complete list.
+
+## Configuration File
+
+Create `config.json` from `config.example.json`:
+
+```json
+{
+  "surahs": {
+    "mode": "all"
+  },
+  "translations": {
+    "ids": [131, 85]
+  },
+  "tafsirs": {
+    "ids": [169]
+  },
+  "output": {
+    "file": "quran_data.jsonl",
+    "format": "jsonl"
+  },
+  "performance": {
+    "concurrency": 3,
+    "batch_size": 50
+  }
+}
+```
+
+Use with: `python collect_quran.py --config config.json`
+
+## Utilities
+
+### Convert JSONL to JSON
+
+```bash
+python convert_to_json.py quran_data.jsonl
+# Creates quran_data.json
+
+python convert_to_json.py quran_data.jsonl output.json --compact
+```
+
+### Validate Data
+
+```bash
+python validate_data.py quran_data.jsonl
+python validate_data.py quran_data.jsonl -v  # verbose
+python validate_data.py quran_data.jsonl -o report.txt
+```
+
+## Rate Limiting & Circuit Breaker
+
+The script includes built-in protection against rate limiting:
+
+- **Minimum delay**: 0.3 seconds between requests
+- **Circuit breaker**: After 5 consecutive 429 errors:
+  - Pauses for 60 seconds
+  - Reduces concurrency by 50%
+  - Auto-resumes
+
+## Troubleshooting
+
+### "Rate limited" messages
+
+The API is limiting requests. The script handles this automatically by:
+1. Backing off exponentially
+2. Reducing concurrency
+3. Pausing when needed
+
+### Incomplete collection
+
+Use `--resume` to continue:
+```bash
+python collect_quran.py --all -t 131 --resume -o quran.jsonl
+```
+
+### Validation failures
+
+Run validation to check data:
+```bash
+python validate_data.py quran_data.jsonl -v
+```
+
+## Project Structure
+
+```
+Tazkiyah/
+├── SETUP.md              # Setup instructions
+├── README.md             # This file
+├── requirements.txt      # Dependencies
+├── config.example.json   # Configuration template
+├── collect_quran.py      # Main CLI
+├── quran_api.py          # API client
+├── collector.py          # Data collection
+├── tafsir_fetcher.py     # Parallel tafsir fetching
+├── validate_data.py      # Validation utility
+└── convert_to_json.py    # JSONL → JSON converter
+```
+
+## License
+
+This project is for educational and research purposes. Quran data is sourced from the [Quran Foundation](https://quran.foundation).
+
+## Contributing
+
+Contributions are welcome! Please ensure:
+- Code follows PEP 8 style guide
+- Type hints are used throughout
+- Docstrings are provided for all functions
+- Tests pass before submitting
