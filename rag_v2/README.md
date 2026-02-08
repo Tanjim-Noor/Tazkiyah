@@ -38,17 +38,17 @@ Edit the root `.env` file — the RAG v2 section has all settings:
 
 ```dotenv
 # Key settings to configure:
-LLM_MODEL=gemma3:4b                      # Switch to any Ollama model
-EMBEDDING_MODEL=nomic-embed-text-v2-moe   # Switch embedding model
-LANGSMITH_API_KEY=your-key-here            # Get from smith.langchain.com
-LANGSMITH_TRACING=true                     # Enable/disable tracing
+LLM_MODEL=gemma3:4b                    # Switch to any Ollama model
+EMBEDDING_MODEL=jina/jina-embeddings-v2-base-en  # Supports 8k tokens
+LANGSMITH_API_KEY=your-key-here        # Get from smith.langchain.com
+LANGSMITH_TRACING=true                 # Enable/disable tracing
 ```
 
 ### 4. Ensure Ollama is running with required models
 
 ```bash
 ollama pull gemma3:4b
-ollama pull nomic-embed-text-v2-moe
+ollama pull jina/jina-embeddings-v2-base-en  # 8k token support
 ```
 
 ## Usage
@@ -113,7 +113,7 @@ When `LANGSMITH_TRACING=true` and `LANGSMITH_API_KEY` is set:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `LLM_MODEL` | `gemma3:4b` | Ollama chat model |
-| `EMBEDDING_MODEL` | `nomic-embed-text-v2-moe` | Ollama embedding model |
+| `EMBEDDING_MODEL` | `jina/jina-embeddings-v2-base-en` | Ollama embedding model (8k tokens) |
 | `OLLAMA_BASE_URL` | `http://localhost:11434` | Ollama server URL |
 | `LANGSMITH_TRACING` | `true` | Enable LangSmith tracing |
 | `LANGSMITH_API_KEY` | — | LangSmith API key |

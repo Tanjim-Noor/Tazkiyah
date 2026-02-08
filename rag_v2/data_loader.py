@@ -38,7 +38,6 @@ def load_quran_json(filepath: Optional[Path] = None) -> dict:
 def create_documents_from_json(
     data: dict,
     include_commentary: bool = True,
-    max_content_length: int = 3000,  # Max chars per document for embedding model
 ) -> list[Document]:
     """
     Convert quran_full_rag_v2.json into LangChain Documents.
@@ -50,11 +49,8 @@ def create_documents_from_json(
     Args:
         data: Loaded JSON data
         include_commentary: Include commentary in indexed text
-        max_content_length: Max characters per document (exceeds embedding model limits)
-                           Long content is truncated, with "..." suffix
     """
     documents = []
-    skipped_long = 0
 
     for surah in data.get("surahs", []):
         surah_number = surah.get("surah_number", 0)
@@ -87,11 +83,6 @@ def create_documents_from_json(
                 logger.debug(f"Skipping empty verse: {verse_id}")
                 continue
 
-            # Truncate if too long (for embedding model limits)
-            if len(page_content) > max_content_length:
-                page_content = page_content[:max_content_length - 3] + "..."
-                skipped_long += 1
-
             # Build metadata (only structural/identification fields)
             metadata = {
                 "verse_id": verse_id,
@@ -111,8 +102,6 @@ def create_documents_from_json(
             ))
 
     logger.info(f"Created {len(documents)} documents from Quran data")
-    if skipped_long > 0:
-        logger.info(f"  (Truncated {skipped_long} documents that exceeded {max_content_length} chars)")
     return documents
 
 
@@ -120,6 +109,14 @@ def load_and_create_documents(
     filepath: Optional[Path] = None,
     include_commentary: bool = True,
 ) -> list[Document]:
-    """Convenience: load JSON + create documents in one call."""
+    """Convenience: load JSON + create documents in one call.
+    
+    Args:
+        filepath: Path to quran_full_rag_v2.json
+        include_commentary: Include commentary in indexed content (no truncation)
+    """
     data = load_quran_json(filepath)
-    return create_documents_from_json(data, include_commentary=include_commentary)
+    return create_documents_from_json(
+        data,
+        include_commentary=include_commentary,
+    )

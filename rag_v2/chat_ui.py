@@ -3,6 +3,7 @@
 Tazkiyah RAG v2 - Gradio Web Chat UI
 
 Web interface with debug panel and LangSmith integration.
+Gradio 6.5.1+ compatible implementation.
 
 Usage:
     python -m rag_v2.chat_ui
@@ -39,6 +40,7 @@ def log_debug(message: str):
 
 
 def get_debug_log_text() -> str:
+    """Get current debug log content."""
     return "\n".join(debug_logs[-200:])
 
 
@@ -64,13 +66,14 @@ except Exception as e:
     rag = None
 
 
-# ─── Chat functions (Gradio 6.0 dict format) ─────────────────────────────────
+# ─── Chat functions (Gradio 6.x dict format) ──────────────────────────────────
 
 def user_message(user_input: str, history: list[dict]) -> tuple[str, list[dict]]:
-    """Handle user submission."""
+    """Handle user submission - add user message to history."""
     if not user_input.strip():
         return "", history
     log_debug(f"User: {user_input[:100]}...")
+    # Append user message in Gradio 6.x format
     history = history + [{"role": "user", "content": user_input}]
     return "", history
 
@@ -80,26 +83,31 @@ def bot_response(history: list[dict]) -> tuple[list[dict], str]:
     if not history:
         return history, get_debug_log_text()
 
-    last_msg = history[-1]
-    if last_msg.get("role") != "user":
+    # Find the last user message
+    last_user_idx = -1
+    for i in range(len(history) - 1, -1, -1):
+        if history[i].get("role") == "user":
+            last_user_idx = i
+            break
+
+    if last_user_idx == -1:
         return history, get_debug_log_text()
 
-    content = last_msg.get("content", "")
-    if isinstance(content, list):
-        user_question = " ".join(
-            item.get("text", "") for item in content if isinstance(item, dict)
-        )
-    else:
-        user_question = str(content)
+    # Extract question text
+    last_msg = history[last_user_idx]
+    user_question = last_msg.get("content", "")
+    if not isinstance(user_question, str):
+        user_question = str(user_question)
+    user_question = user_question.strip()
 
-    if not user_question.strip():
+    if not user_question:
         return history, get_debug_log_text()
 
     if rag is None:
         log_debug("ERROR: RAG not initialized")
         history.append({
-            "role": "assistant",
-            "content": "Error: RAG system not initialized. Check logs.",
+            "role": "assistant", 
+            "content": "Error: RAG system not initialized. Check logs."
         })
         return history, get_debug_log_text()
 
@@ -107,7 +115,7 @@ def bot_response(history: list[dict]) -> tuple[list[dict], str]:
     if stats["count"] == 0:
         history.append({
             "role": "assistant",
-            "content": "No documents indexed. Run:\n```\npython -m rag_v2.index_data\n```",
+            "content": "No documents indexed. Run:\n```\npython -m rag_v2.index_data\n```"
         })
         return history, get_debug_log_text()
 
@@ -169,7 +177,7 @@ def refresh_debug_logs() -> str:
 # ─── Build Gradio UI ─────────────────────────────────────────────────────────
 
 def build_ui() -> gr.Blocks:
-    """Build the Gradio 6.0 web interface."""
+    """Build the Gradio web interface."""
 
     langsmith_on = (
         config.LANGSMITH_TRACING.lower() == "true"
@@ -178,10 +186,7 @@ def build_ui() -> gr.Blocks:
     )
     langsmith_badge = "ON" if langsmith_on else "OFF"
 
-    with gr.Blocks(
-        title="Tazkiyah RAG v2",
-        theme=gr.themes.Soft(),
-    ) as demo:
+    with gr.Blocks(title="Tazkiyah RAG v2") as demo:
         gr.Markdown(
             f"# Tazkiyah RAG v2\n"
             f"Quranic knowledge assistant — LangChain + Ollama + LangSmith\n\n"
@@ -194,10 +199,9 @@ def build_ui() -> gr.Blocks:
             # Chat column
             with gr.Column(scale=3):
                 chatbot = gr.Chatbot(
-                    type="messages",
-                    height=500,
                     label="Chat",
-                    show_copy_button=True,
+                    height=500,
+                    scale=1,
                 )
                 with gr.Row():
                     msg_input = gr.Textbox(
@@ -257,6 +261,7 @@ def main():
         server_name=config.UI_SERVER_HOST,
         server_port=config.UI_SERVER_PORT,
         share=config.UI_SHARE,
+        theme=gr.themes.Soft(),
     )
 
 

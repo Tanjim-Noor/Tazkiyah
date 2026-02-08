@@ -39,9 +39,8 @@ logger = logging.getLogger(__name__)
 )
 @click.option("--clear", is_flag=True, help="Clear existing collection before indexing")
 @click.option("--batch-size", default=100, help="Documents per batch (default: 100)")
-@click.option("--max-content-length", default=3000, help="Max chars per document (default: 3000)")
 @click.option("--no-commentary", is_flag=True, help="Exclude commentary from indexed text")
-def main(data_file, clear: bool, batch_size: int, max_content_length: int, no_commentary: bool):
+def main(data_file, clear: bool, batch_size: int, no_commentary: bool):
     """Index quran_full_rag_v2.json into ChromaDB for RAG v2."""
 
     console.print("\n[bold cyan]Tazkiyah RAG v2 — Indexer[/bold cyan]\n")
@@ -76,14 +75,13 @@ def main(data_file, clear: bool, batch_size: int, max_content_length: int, no_co
     documents = load_and_create_documents(
         filepath=data_path,
         include_commentary=not no_commentary,
-        max_content_length=max_content_length,
     )
     console.print(f"[green]Created {len(documents)} documents[/green]")
     console.print(
         f"  [dim]Content: translation_clean"
         f"{' + commentary_clean' if not no_commentary else ''}[/dim]"
     )
-    console.print(f"  [dim]Max length: {max_content_length} chars[/dim]\n")
+    console.print(f"  [dim]No character limit (Jina 8k tokens)[/dim]\n")
 
     if not documents:
         console.print("[red]No documents created! Check data file.[/red]")

@@ -83,7 +83,7 @@ When answering questions:
 5. If the context doesn't contain relevant information, say so honestly
 6. Do not fabricate or invent any Quranic content""")
 
-RAG_PROMPT_TEMPLATE = os.getenv("RAG_PROMPT_TEMPLATE", """Use the following context from the Quran (translation and commentary by Maududi) to answer the question.
+RAG_PROMPT_TEMPLATE = os.getenv("RAG_PROMPT_TEMPLATE", """Use the following context from the Quran (translation and commentary) to answer the question.
 
 Context:
 {context}
