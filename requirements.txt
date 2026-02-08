@@ -13,6 +13,13 @@ tqdm                        # Progress bars
 langchain                   # Core LangChain framework
 langchain-ollama            # Ollama integration (embeddings + LLM)
 langchain-chroma            # ChromaDB vector store integration
+langchain-core              # Core abstractions (prompts, documents, runnables)
+
+# ============================================
+# RAG v2 Additions
+# ============================================
+python-dotenv               # Load .env configuration
+langsmith                   # LangSmith tracing & observability
 
 # ============================================
 # CLI and UI
