@@ -78,5 +78,8 @@ dmypy.json
 # pytype static type analyzer
 .pytype/
 
-# Chroma DB v2 artifacts
-rag_v2/chroma_db_v2/
+# Chroma DB / vector store artifacts
+data/vectorstores/
+**/chroma_db/
+**/chroma_db_v2/
+**/chroma.sqlite3

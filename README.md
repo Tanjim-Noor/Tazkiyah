@@ -1,6 +1,6 @@
-# Quran Data Collection Script
+# Tazkiyah
 
-A Python CLI tool for collecting Quran data from the [Quran Foundation API](https://quran.foundation). Designed for RAG (Retrieval-Augmented Generation) systems and AI-powered Quranic applications.
+Separation-first monorepo for Quran data collection and RAG tooling.
 
 ## Features
 
@@ -27,6 +27,20 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
+## Repository Layout
+
+The repository is organized as a separation-first monorepo.
+
+- `frontend/` is reserved for the future React + Vite + TypeScript app.
+- `backend/` is reserved for the future FastAPI app.
+- `tools/python/collection/` holds the Quran collection tooling.
+- `tools/python/rag_v1/` holds the legacy RAG pipeline and compatibility tools.
+- `tools/python/rag_v2/` holds the active RAG pipeline.
+- `data/` holds raw, processed, sample, and vectorstore artifacts.
+- `docs/` contains the migration and boundary notes.
+
+No frontend or backend framework scaffold is created yet.
+
 ```bash
 # Linux / macOS
 cd /path/to/Tazkiyah
@@ -38,17 +52,17 @@ pip install -r requirements.txt
 ### 2. List Available Resources
 
 ```bash
-python collect_quran.py --list-resources
+python -m tools.python.collection.collect_quran --list-resources
 ```
 
 ### 3. Collect Data
 
 ```bash
 # Quick test: First 3 surahs
-python collect_quran.py --surah-range 1 3 --translations 20,85 --output test.jsonl
+python -m tools.python.collection.collect_quran --surah-range 1 3 --translations 20,85 --output test.jsonl
 
 # Full collection with tafsir
-python collect_quran.py --all --translations 20,85 --tafsirs 169 --output quran_complete.jsonl
+python -m tools.python.collection.collect_quran --all --translations 20,85 --tafsirs 169 --output quran_complete.jsonl
 ```
 
 ## Usage
@@ -57,19 +71,19 @@ python collect_quran.py --all --translations 20,85 --tafsirs 169 --output quran_
 
 ```bash
 # Collect all surahs
-python collect_quran.py --all -t 20,85 -o quran.jsonl
+python -m tools.python.collection.collect_quran --all -t 20,85 -o quran.jsonl
 
 # Collect single surah
-python collect_quran.py --surah 2 -t 20 -o baqarah.jsonl
+python -m tools.python.collection.collect_quran --surah 2 -t 20 -o baqarah.jsonl
 
 # Collect range of surahs
-python collect_quran.py --surah-range 1 10 -t 20,85 -o first_ten.jsonl
+python -m tools.python.collection.collect_quran --surah-range 1 10 -t 20,85 -o first_ten.jsonl
 
 # Resume interrupted collection
-python collect_quran.py --all -t 20 --resume -o quran.jsonl
+python -m tools.python.collection.collect_quran --all -t 20 --resume -o quran.jsonl
 
 # Validate existing data
-python collect_quran.py --validate-only -o quran.jsonl
+python -m tools.python.collection.collect_quran --validate-only -o quran.jsonl
 ```
 
 ### CLI Options
@@ -201,25 +215,25 @@ Create `config.json` from `config.example.json`:
 }
 ```
 
-Use with: `python collect_quran.py --config config.json`
+Use with: `python -m tools.python.collection.collect_quran --config config.json`
 
 ## Utilities
 
 ### Convert JSONL to JSON
 
 ```bash
-python convert_to_json.py quran_data.jsonl
+python -m tools.python.collection.convert_to_json quran_data.jsonl
 # Creates quran_data.json
 
-python convert_to_json.py quran_data.jsonl output.json --compact
+python -m tools.python.collection.convert_to_json quran_data.jsonl output.json --compact
 ```
 
 ### Validate Data
 
 ```bash
-python validate_data.py quran_data.jsonl
-python validate_data.py quran_data.jsonl -v  # verbose
-python validate_data.py quran_data.jsonl -o report.txt
+python -m tools.python.collection.validate_data quran_data.jsonl
+python -m tools.python.collection.validate_data quran_data.jsonl -v  # verbose
+python -m tools.python.collection.validate_data quran_data.jsonl -o report.txt
 ```
 
 ### Prepare RAG Chunks

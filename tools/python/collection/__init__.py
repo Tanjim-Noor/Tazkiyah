@@ -1,0 +1,1 @@
+"""Quran collection tooling package."""

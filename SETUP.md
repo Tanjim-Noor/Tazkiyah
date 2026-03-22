@@ -58,7 +58,7 @@ pip install -r requirements.txt
 pip list
 
 # Verify script can run
-python collect_quran.py --help
+python -m tools.python.collection.collect_quran --help
 ```
 
 ## Step 4: Deactivate When Done
@@ -100,12 +100,10 @@ Tazkiyah/
 ├── README.md                 # Usage guide
 ├── requirements.txt          # Dependencies
 ├── config.example.json       # Configuration template
-├── collect_quran.py          # Main CLI entry point
-├── quran_api.py              # API client module
-├── collector.py              # Data collection logic
-├── tafsir_fetcher.py         # Parallel tafsir fetching
-├── validate_data.py          # Validation utility
-└── convert_to_json.py        # JSONL → JSON converter
+├── tools/python/collection/  # Quran collection tooling
+├── tools/python/rag_v1/      # Legacy RAG tooling
+├── tools/python/rag_v2/      # Active RAG pipeline
+└── data/                     # Processed data and vector stores
 ```
 
 ## Quick Start
@@ -116,11 +114,11 @@ Tazkiyah/
 source venv/bin/activate      # Linux/macOS
 
 # List available translations and tafsirs
-python collect_quran.py --list-resources
+python -m tools.python.collection.collect_quran --list-resources
 
 # Collect first 3 surahs (quick test)
-python collect_quran.py --surah-range 1 3 --translations 131,85 --output test.jsonl
+python -m tools.python.collection.collect_quran --surah-range 1 3 --translations 131,85 --output test.jsonl
 
 # Collect all surahs with tafsir
-python collect_quran.py --all --translations 131,85 --tafsirs 169 --output quran_complete.jsonl
+python -m tools.python.collection.collect_quran --all --translations 131,85 --tafsirs 169 --output quran_complete.jsonl
 ```
