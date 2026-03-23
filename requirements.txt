@@ -14,6 +14,7 @@ langchain                   # Core LangChain framework
 langchain-ollama            # Ollama integration (embeddings + LLM)
 langchain-chroma            # ChromaDB vector store integration
 langchain-core              # Core abstractions (prompts, documents, runnables)
+langgraph                   # LangGraph orchestration framework
 
 # ============================================
 # RAG v2 Additions
@@ -27,9 +28,17 @@ langsmith                   # LangSmith tracing & observability
 click                       # Command-line interface
 rich                        # Beautiful terminal output
 gradio                      # Web UI for chat interface
+fastapi                     # Backend API framework
+uvicorn                     # ASGI server for FastAPI
+pydantic-settings           # Typed settings from environment
 
 # ============================================
 # Utilities
 # ============================================
 numpy                       # Numerical operations
 beautifulsoup4              # HTML parsing for chunk preparation
+
+# ============================================
+# Testing
+# ============================================
+pytest                      # Test runner

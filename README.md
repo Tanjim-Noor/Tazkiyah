@@ -32,14 +32,12 @@ pip install -r requirements.txt
 The repository is organized as a separation-first monorepo.
 
 - `frontend/` is reserved for the future React + Vite + TypeScript app.
-- `backend/` is reserved for the future FastAPI app.
+- `backend/` contains the FastAPI + LangGraph chatbot backend.
 - `tools/python/collection/` holds the Quran collection tooling.
 - `tools/python/rag_v1/` holds the legacy RAG pipeline and compatibility tools.
 - `tools/python/rag_v2/` holds the active RAG pipeline.
 - `data/` holds raw, processed, sample, and vectorstore artifacts.
 - `docs/` contains the migration and boundary notes.
-
-No frontend or backend framework scaffold is created yet.
 
 ```bash
 # Linux / macOS
@@ -64,6 +62,18 @@ python -m tools.python.collection.collect_quran --surah-range 1 3 --translations
 # Full collection with tafsir
 python -m tools.python.collection.collect_quran --all --translations 20,85 --tafsirs 169 --output quran_complete.jsonl
 ```
+
+### 4. Run Backend API
+
+```powershell
+& "d:/Work/Quran Project/Tazkiyah/venv/Scripts/python.exe" -m uvicorn backend.main:app --reload
+```
+
+Backend endpoints:
+
+- `GET /health`
+- `GET /api/v1/config`
+- `POST /api/v1/chat` (SSE streaming)
 
 ## Usage
 
