@@ -63,7 +63,20 @@ class FakeRAGService:
     @staticmethod
     def format_sse(event: str, payload: dict) -> str:
         return f"event: {event}\\ndata: {json.dumps(payload)}\\n\\n"
-
+    def answer(self, *, query, top_k, temperature, return_sources):
+        # Reuse stream behavior for fake service in sync mode.
+        final_answer = ""
+        category = "Factual & Informational"
+        sources = [
+            {
+                "verse_id": "1:1",
+                "surah_name": "Al-Fatihah",
+                "surah_number": 1,
+                "verse_number": 1,
+                "score": 0.1,
+            }
+        ] if return_sources else []
+        return {"answer": "Assalamu alaykum", "category": category, "sources": sources}
 
 def _test_client() -> TestClient:
     app = create_app()
@@ -100,3 +113,23 @@ def test_chat_sse_endpoint():
     assert "event: meta" in text
     assert "event: token" in text
     assert "event: done" in text
+
+
+def test_chat_sync_endpoint():
+    client = _test_client()
+    response = client.post(
+        "/api/v1/chat/sync",
+        json={
+            "query": "What does surah fatiha mean?",
+            "top_k": 1,
+            "temperature": 0.5,
+            "return_sources": True,
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["category"] == "Factual & Informational"
+    assert body["answer"] == "Assalamu alaykum"
+    assert isinstance(body["sources"], list)
+

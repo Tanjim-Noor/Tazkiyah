@@ -59,6 +59,7 @@ class RAGService:
             "vectorstore_provider": self.settings.vectorstore_provider,
             "llm_model": self.settings.llm_model,
             "embedding_model": self.settings.embedding_model,
+            "chroma_persist_dir": str(self.settings.chroma_persist_dir),
             "collection_name": self.settings.collection_name,
             "top_k": self.settings.top_k,
             "categories": list(self.settings.categories),
@@ -127,7 +128,44 @@ class RAGService:
                 "sources": sources,
             },
         }
+    def answer(
+        self,
+        *,
+        query: str,
+        top_k: int | None,
+        temperature: float | None,
+        return_sources: bool,
+    ) -> dict:
+        state = self._run_graph(query, top_k_override=top_k)
+        category = state.get("category", self.settings.category_factual)
 
+        answer = self.llm_adapter.invoke(
+            state.get("final_prompt", ""),
+            temperature=temperature,
+        )
+
+        sources = []
+        if return_sources:
+            documents = state.get("documents", [])
+            scores = state.get("scores", [])
+            for idx, doc in enumerate(documents):
+                metadata = doc.metadata or {}
+                score = scores[idx] if idx < len(scores) else None
+                sources.append(
+                    {
+                        "verse_id": metadata.get("verse_id", ""),
+                        "surah_name": metadata.get("surah_name"),
+                        "surah_number": metadata.get("surah_number"),
+                        "verse_number": metadata.get("verse_number"),
+                        "score": score,
+                    }
+                )
+
+        return {
+            "answer": answer,
+            "category": category,
+            "sources": sources,
+        }
     @staticmethod
     def format_sse(event: str, payload: dict) -> str:
         return f"event: {event}\\ndata: {json.dumps(payload, ensure_ascii=False)}\\n\\n"

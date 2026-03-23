@@ -34,3 +34,17 @@ async def chat_stream(
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )
+
+
+@router.post("/sync")
+def chat_sync(
+    payload: ChatRequest,
+    service: RAGService = Depends(get_rag_service),
+) -> dict:
+    """Non-streaming endpoint for clients that do not support SSE (Swagger, simple REST)."""
+    return service.answer(
+        query=payload.query,
+        top_k=payload.top_k,
+        temperature=payload.temperature,
+        return_sources=payload.return_sources,
+    )
