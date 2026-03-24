@@ -17,11 +17,7 @@ function App() {
     return [healthError, configError].filter(Boolean).join(' | ')
   }, [healthQuery.error, configQuery.error])
 
-  const backendReady =
-    !bootstrapError &&
-    healthQuery.data?.status === 'ok' &&
-    healthQuery.data?.vectorstore_ready &&
-    healthQuery.data?.llm_ready
+  const backendReachable = !bootstrapError && Boolean(healthQuery.data)
 
   return (
     <main className="app-shell">
@@ -43,7 +39,7 @@ function App() {
         <ConfigSummary config={configQuery.data} isLoading={configQuery.isLoading} />
       </section>
 
-      <Chat isBackendReady={backendReady} />
+      <Chat isBackendReady={backendReachable} />
     </main>
   )
 }

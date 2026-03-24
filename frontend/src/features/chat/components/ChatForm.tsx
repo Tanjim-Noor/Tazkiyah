@@ -86,7 +86,7 @@ export function ChatForm({ isStreaming, isBackendReady, onSubmit }: ChatFormProp
         {isStreaming ? 'Streaming...' : isBackendReady ? 'Send' : 'Backend not ready'}
       </button>
       {!isBackendReady && !isStreaming ? (
-        <p className="muted">Chat is disabled until LLM and vector store are both ready.</p>
+        <p className="muted">Chat is disabled because backend is unreachable.</p>
       ) : null}
     </form>
   )

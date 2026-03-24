@@ -88,10 +88,16 @@ class RAGService:
         temperature: float | None,
         return_sources: bool,
     ) -> AsyncIterator[dict]:
+        # Emit an early metadata event so streaming clients can confirm the
+        # connection is alive before graph retrieval/assembly completes.
+        provisional_category = self.settings.category_factual
+        yield {"event": "meta", "data": {"category": provisional_category}}
+
         state = self._run_graph(query, top_k_override=top_k)
         category = state.get("category", self.settings.category_factual)
 
-        yield {"event": "meta", "data": {"category": category}}
+        if category != provisional_category:
+            yield {"event": "meta", "data": {"category": category}}
 
         answer_chunks: list[str] = []
         async for chunk in self.llm_adapter.stream(
@@ -168,4 +174,4 @@ class RAGService:
         }
     @staticmethod
     def format_sse(event: str, payload: dict) -> str:
-        return f"event: {event}\\ndata: {json.dumps(payload, ensure_ascii=False)}\\n\\n"
+        return f"event: {event}\ndata: {json.dumps(payload, ensure_ascii=False)}\n\n"
