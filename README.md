@@ -1,19 +1,43 @@
 # Tazkiyah
 
-Separation-first monorepo for Quran data collection and RAG tooling.
+AI-powered Quranic guidance platform that bridges daily life questions with contextually relevant Quranic verses and commentary.
+
+## Product Vision
+
+Tazkiyah helps Muslims describe real-life struggles in natural language and receive Quranic guidance with context, compassion, and clarity.
+
+The long-term product includes conversational guidance, reflection workflows, community wisdom, and growth tracking. The repository currently contains the backend API foundation and the supporting collection/RAG tooling required to power those experiences.
 
 ## Features
 
-- 📖 **Complete Quran Collection** - All 114 surahs, 6236 verses
-- 🌍 **Multiple Translations** - Support for 100+ translations
-- 📚 **Tafsir Integration** - Optional commentary from major tafsir sources
-- 📝 **Footnote Extraction** - Automatic footnote fetching and linking
-- ⚡ **Parallel Processing** - Configurable concurrent tafsir fetching
-- 💾 **JSONL Output** - Streaming format with resume capability
-- 🔄 **Resume Support** - Continue interrupted collections
-- 🛡️ **Rate Limiting** - Built-in circuit breaker and backoff
-- ✅ **Validation** - Verify data completeness and integrity
-- 🧹 **RAG Chunk Preparation** - Clean HTML, format text for embeddings
+- Conversational Quran guidance backend with category-aware responses.
+- Semantic retrieval against a Quran vector store (RAG v2 data pipeline).
+- Streaming and non-streaming chat APIs for frontend integration.
+- Runtime health/config endpoints for diagnostics and app bootstrap.
+- Quran collection toolkit with translations, tafsir, and validation workflows.
+- Chunk preparation and indexing tooling for retrieval quality.
+
+## Current Scope (Implemented)
+
+- Backend API (FastAPI + LangGraph):
+  - GET /health
+  - GET /api/v1/config
+  - POST /api/v1/chat (SSE)
+  - POST /api/v1/chat/sync (JSON)
+- Data and retrieval tooling:
+  - Quran collection and validation utilities under tools/python/collection
+  - RAG v2 pipeline under tools/python/rag_v2
+- Frontend status:
+  - React + Vite scaffold exists in frontend/
+  - Product UI features are in active build phase
+
+## Planned Product Capabilities (Roadmap)
+
+- Verse card system with Arabic/transliteration/translation controls.
+- Reflection journal with mood tracking and bookmarks.
+- Community wisdom wall (anonymous reflections).
+- Progress and growth dashboard.
+- Personalized verse-of-the-day and preference adaptation.
 
 ## Quick Start
 
@@ -31,7 +55,7 @@ pip install -r requirements.txt
 
 The repository is organized as a separation-first monorepo.
 
-- `frontend/` is reserved for the future React + Vite + TypeScript app.
+- `frontend/` hosts the React + Vite + TypeScript app.
 - `backend/` contains the FastAPI + LangGraph chatbot backend.
 - `tools/python/collection/` holds the Quran collection tooling.
 - `tools/python/rag_v1/` holds the legacy RAG pipeline and compatibility tools.
@@ -74,6 +98,7 @@ Backend endpoints:
 - `GET /health`
 - `GET /api/v1/config`
 - `POST /api/v1/chat` (SSE streaming)
+- `POST /api/v1/chat/sync` (JSON)
 
 ## Usage
 
@@ -197,7 +222,7 @@ Single array of verses:
 | 93 | Tafsir al-Jalalayn | Arabic |
 | 168 | Tafsir al-Tabari | Arabic |
 
-Run `python collect_quran.py --list-resources` for the complete list.
+Run `python -m tools.python.collection.collect_quran --list-resources` for the complete list.
 
 ## Configuration File
 
@@ -252,19 +277,19 @@ Transform raw collected data into clean, embedding-ready chunks:
 
 ```bash
 # Preview chunks before processing
-python prepare_chunks.py quran_data.jsonl --preview 3
+python -m tools.python.collection.prepare_chunks quran_data.jsonl --preview 3
 
 # Show input statistics
-python prepare_chunks.py quran_data.jsonl --stats-only
+python -m tools.python.collection.prepare_chunks quran_data.jsonl --stats-only
 
 # Full processing with structured format
-python prepare_chunks.py quran_data.jsonl -o chunks.jsonl
+python -m tools.python.collection.prepare_chunks quran_data.jsonl -o chunks.jsonl
 
 # Minimal format with tafsir truncation (good for embeddings)
-python prepare_chunks.py quran_data.jsonl -o chunks.jsonl --chunk-format minimal --max-tafsir 2000
+python -m tools.python.collection.prepare_chunks quran_data.jsonl -o chunks.jsonl --chunk-format minimal --max-tafsir 2000
 
 # Skip Arabic text and tafsir (translations only)
-python prepare_chunks.py quran_data.jsonl -o chunks.jsonl --no-arabic --no-tafsir
+python -m tools.python.collection.prepare_chunks quran_data.jsonl -o chunks.jsonl --no-arabic --no-tafsir
 ```
 
 #### Chunk Processor Options
@@ -339,14 +364,14 @@ The API is limiting requests. The script handles this automatically by:
 
 Use `--resume` to continue:
 ```bash
-python collect_quran.py --all -t 20 --resume -o quran.jsonl
+python -m tools.python.collection.collect_quran --all -t 20 --resume -o quran.jsonl
 ```
 
 ### Validation failures
 
 Run validation to check data:
 ```bash
-python validate_data.py quran_data.jsonl -v
+python -m tools.python.collection.validate_data quran_data.jsonl -v
 ```
 
 ## RAG Pipeline
@@ -357,62 +382,48 @@ After preparing chunks, use the RAG pipeline to query Quranic knowledge with AI:
 
 ```bash
 # Index chunks into ChromaDB
-python -m rag.index_chunks fatiha.chunks.jsonl
+python -m tools.python.rag_v2.index_data
 
 # Launch web chat UI
-python -m rag.chat_ui
+python -m tools.python.rag_v2.chat_ui
 
 # Or use terminal chat
-python -m rag.chat
+python -m tools.python.rag_v2.chat
 
 # Or single query
-python -m rag.query_rag "What is the meaning of Bismillah?"
+python -m tools.python.rag_v2.query_rag "What is the meaning of Bismillah?"
 ```
 
 ### RAG Architecture
 
 ```
-Chunks JSONL → Embeddings (nomic-v2-moe) → ChromaDB → Retrieval → LLM (gemma3:4b) → Answer
+Quran JSON (rag_v2 source) -> Embeddings (jina/jina-embeddings-v2-base-en) -> ChromaDB -> Retrieval -> LLM (gemma3:4b) -> Answer
 ```
 
 ### Configuration
 
-Edit `rag/config.py` to customize:
+Edit `tools/python/rag_v2/config.py` to customize:
 - **TOP_K**: Number of documents to retrieve (default: 5)
 - **LLM_MODEL**: Ollama model (default: gemma3:4b)
 - **LLM_TEMPERATURE**: 0=factual, 1=creative (default: 0.3)
 - **RAG_PROMPT_TEMPLATE**: Custom prompt template
 
-See [rag/README.md](rag/README.md) for full documentation.
+See [tools/python/rag_v2/README.md](tools/python/rag_v2/README.md) for full documentation.
 
 ## Project Structure
 
 ```
 Tazkiyah/
-├── README.md             # This file
-├── SETUP.md              # Setup instructions
-├── requirements.txt      # Dependencies
-├── config.example.json   # Configuration template
-│
-├── collect_quran.py      # Main collection CLI
-├── quran_api.py          # API client
-├── collector.py          # Data collection logic
-├── tafsir_fetcher.py     # Parallel tafsir fetching
-│
-├── prepare_chunks.py     # RAG chunk preparation CLI
-├── chunk_processor.py    # Chunk processing logic
-│
-├── validate_data.py      # Validation utility
-├── convert_to_json.py    # JSONL → JSON converter
-│
-└── rag/                  # RAG Pipeline
-    ├── config.py         # Configuration (models, retrieval, prompts)
-    ├── rag_pipeline.py   # Core TazkiyahRAG class
-    ├── index_chunks.py   # Index chunks CLI
-    ├── query_rag.py      # Query CLI
-    ├── chat.py           # Terminal chat
-    ├── chat_ui.py        # Gradio web UI
-    └── README.md         # RAG documentation
+├── backend/                      # FastAPI + LangGraph API
+├── frontend/                     # React + Vite app (in progress)
+├── tools/python/collection/      # Quran collection + validation utilities
+├── tools/python/rag_v2/          # Active RAG v2 pipeline
+├── tools/python/rag_v1/          # Legacy pipeline and compatibility tools
+├── data/                         # Raw, processed, samples, vectorstores
+├── docs/                         # Architecture and migration notes
+├── requirements.txt
+├── config.example.json
+└── SETUP.md
 ```
 
 ## License
