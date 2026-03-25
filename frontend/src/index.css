@@ -1,57 +1,127 @@
-:root {
-  --bg: #f6f7fb;
-  --panel-bg: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --border: #d1d5db;
-  --button-bg: #f3f4f6;
-  --input-bg: #ffffff;
-  --assistant-msg-bg: #eff6ff;
-  --user-msg-bg: #f9fafb;
+@import "tailwindcss";
 
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  line-height: 1.5;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@source "./**/*.{ts,tsx,css}";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #fcf9f2;
+  --panel-bg: #fbfaf7;
+  --text: #1c1c18;
+  --muted: #5f675f;
+  --border: #d6ddd7;
+  --button-bg: #e7ede8;
+  --input-bg: #ffffff;
+  --assistant-msg-bg: #f6f3ec;
+  --user-msg-bg: #d7e4ef;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #10151f;
-    --panel-bg: #162132;
-    --text: #e5e7eb;
-    --muted: #94a3b8;
-    --border: #334155;
-    --button-bg: #1f2937;
-    --input-bg: #0f172a;
-    --assistant-msg-bg: #1e293b;
-    --user-msg-bg: #111827;
+.dark {
+  --bg: #141916;
+  --panel-bg: #1c2520;
+  --text: #e8ece9;
+  --muted: #aab7ae;
+  --border: #3a4a3f;
+  --button-bg: #2a362e;
+  --input-bg: #162019;
+  --assistant-msg-bg: #253028;
+  --user-msg-bg: #1f3242;
+}
+
+@theme {
+  --font-sans: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-serif: "Noto Serif", Georgia, serif;
+
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-panel: var(--panel-bg);
+  --color-assistant: var(--assistant-msg-bg);
+  --color-user: var(--user-msg-bg);
+  --color-control: var(--button-bg);
+  --color-input: var(--input-bg);
+
+  --color-sanctuary-ink: #2f3a33;
+  --color-sanctuary-subtle: #536069;
+  --color-sanctuary-accent: #486551;
+  --color-sanctuary-action: #2f4d3a;
+  --color-sanctuary-pill: #ebe8e1;
+  --color-sanctuary-warn-bg: #f5ece7;
+  --color-sanctuary-warn-fg: #69483d;
+
+  --animate-sanctuary-fade-in: sanctuary-fade-in 360ms ease;
+  --animate-reflective-dot: reflective-dot 1.3s ease-in-out infinite;
+
+  @keyframes sanctuary-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(5px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes reflective-dot {
+    0%,
+    80%,
+    100% {
+      opacity: 0.35;
+      transform: translateY(0);
+    }
+
+    40% {
+      opacity: 1;
+      transform: translateY(-2px);
+    }
   }
 }
 
-* {
-  box-sizing: border-box;
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  body {
+    @apply m-0 min-h-screen bg-background text-foreground antialiased;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    @apply m-0;
+  }
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-}
+@layer utilities {
+  .chatbot-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklab, var(--color-sanctuary-accent) 22%, transparent) transparent;
+  }
 
-#root {
-  min-height: 100vh;
-}
+  .chatbot-scrollbar::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+  }
 
-h1,
-h2,
-h3 {
-  margin: 0;
-}
+  .chatbot-scrollbar::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--color-sanctuary-accent) 22%, transparent);
+    border-radius: 999px;
+  }
 
-p {
-  margin: 0;
+  .chatbot-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
 }

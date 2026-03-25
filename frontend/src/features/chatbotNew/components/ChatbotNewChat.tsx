@@ -5,7 +5,6 @@ import type { ChatRequest, SourceItem } from '../../../common/types'
 import { ChatInputBar } from './ChatInputBar'
 import { VerseSourceCard } from './VerseSourceCard'
 import { useChatbotNew } from '../hooks/useChatbotNew'
-import './ChatbotNewChat.css'
 
 interface ChatbotNewChatProps {
   isBackendReady: boolean
@@ -59,29 +58,49 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
   }, [messages])
 
   return (
-    <section className="reflective-chat-shell">
-      <div className="reflective-chat-stage">
+    <section className="grid h-full min-h-0 w-full grid-rows-[minmax(0,1fr)_auto_auto] gap-3">
+      <div className="grid h-full min-h-0 grid-rows-[auto_auto_minmax(0,1fr)] gap-4 rounded-3xl border border-border/50 bg-panel/90 p-4 shadow-[0_26px_54px_rgba(28,28,24,0.06)] md:px-[clamp(26px,3vw,42px)] md:py-[clamp(24px,3.2vh,34px)]">
         {fallbackStatus.active && fallbackStatus.message ? (
-          <div className="reflective-notice" role="status" aria-live="polite">
+          <div
+            className="flex items-center justify-between gap-3 rounded-xl bg-control px-3 py-2.5 text-sm text-sanctuary-ink"
+            role="status"
+            aria-live="polite"
+          >
             <p>{fallbackStatus.message}</p>
-            <button type="button" onClick={() => void retryLastMessage()}>
+            <button
+              type="button"
+              onClick={() => void retryLastMessage()}
+              className="rounded-lg bg-user px-3 py-2 text-sm text-sanctuary-action focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
+            >
               Retry
             </button>
           </div>
         ) : null}
 
         {error ? (
-          <div className="reflective-notice reflective-notice-error" role="alert">
+          <div className="flex items-center justify-between gap-3 rounded-xl bg-sanctuary-warn-bg px-3 py-2.5 text-sm text-sanctuary-warn-fg" role="alert">
             <p>{error}</p>
-            <div className="reflective-notice-actions">
-              <button type="button" onClick={clearError}>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={clearError}
+                className="rounded-lg bg-white/70 px-3 py-2 text-sm text-sanctuary-warn-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
+              >
                 Dismiss
               </button>
-              <button type="button" onClick={() => void retryLastMessage()}>
+              <button
+                type="button"
+                onClick={() => void retryLastMessage()}
+                className="rounded-lg bg-white/70 px-3 py-2 text-sm text-sanctuary-warn-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
+              >
                 Retry
               </button>
               {isStreaming ? (
-                <button type="button" onClick={cancel}>
+                <button
+                  type="button"
+                  onClick={cancel}
+                  className="rounded-lg bg-white/70 px-3 py-2 text-sm text-sanctuary-warn-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
+                >
                   Stop
                 </button>
               ) : null}
@@ -90,18 +109,20 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
         ) : null}
 
         {showEmptyState ? (
-          <div className="reflective-empty-state">
-            <h2>What is weighing on your heart today?</h2>
-            <p>
+          <div className="grid min-h-full place-content-center justify-items-center gap-[18px] px-1 py-[clamp(32px,7vh,84px)] text-center">
+            <h2 className="font-serif text-[clamp(2rem,8vw,3.5rem)] leading-[1.18] text-sanctuary-ink md:text-[clamp(2.3rem,4vw,3.5rem)]">
+              What is weighing on your heart today?
+            </h2>
+            <p className="max-w-[68ch] text-[1rem] leading-[1.75] text-sanctuary-subtle md:text-[clamp(1.02rem,1.25vw,1.2rem)]">
               Share your situation in your own words. We will respond with calm, Quran-grounded
               guidance and transparent verse references.
             </p>
-            <div className="reflective-chip-row">
+            <div className="flex flex-wrap justify-center gap-2.5">
               {EMPTY_STATE_SUGGESTIONS.map((suggestion) => (
                 <button
                   key={suggestion}
                   type="button"
-                  className="reflective-chip"
+                  className="rounded-full bg-control px-4 py-2.5 text-sm text-sanctuary-action transition hover:-translate-y-px hover:bg-user focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
                   onClick={() => void onSuggestionClick(suggestion)}
                 >
                   {suggestion}
@@ -110,26 +131,28 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
             </div>
           </div>
         ) : (
-          <div className="reflective-transcript" aria-live="polite">
+          <div className="chatbot-scrollbar grid h-full min-h-0 gap-7 overflow-auto pr-2" aria-live="polite">
             {messages.map((message) => (
               <article
                 key={message.id}
-                className={`reflective-bubble ${
-                  message.role === 'user' ? 'reflective-bubble-user' : 'reflective-bubble-assistant'
+                className={`grid max-w-[96%] gap-3 rounded-[20px] px-5 py-[18px] leading-[1.65] animate-sanctuary-fade-in md:max-w-[min(82ch,92%)] ${
+                  message.role === 'user'
+                    ? 'ml-auto rounded-tr-[10px] bg-user text-[#1d2c34]'
+                    : 'mr-auto rounded-tl-[12px] bg-assistant text-sanctuary-ink'
                 }`}
               >
                 {message.role === 'user' ? (
-                  <p className="reflective-message-text">{message.content}</p>
+                  <p className="m-0 whitespace-pre-wrap">{message.content}</p>
                 ) : (
-                  <div className="assistant-markdown">
+                  <div className="leading-7 text-sanctuary-ink [&_blockquote]:my-2.5 [&_blockquote]:rounded-[10px] [&_blockquote]:border-l-[3px] [&_blockquote]:border-l-[color:var(--color-sanctuary-accent)] [&_blockquote]:bg-white/80 [&_blockquote]:px-3 [&_blockquote]:py-2.5 [&_blockquote]:font-serif [&_h1]:mb-2 [&_h1]:font-serif [&_h1]:text-xl [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-lg [&_h3]:mb-2 [&_h3]:font-serif [&_h3]:text-base [&_ol]:my-1.5 [&_ol]:ml-5 [&_p]:m-0 [&_p+p]:mt-2.5 [&_ul]:my-1.5 [&_ul]:ml-5">
                     <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                 )}
                 {message.role === 'assistant' && message.category ? (
-                  <p className="reflective-message-meta">Category: {message.category}</p>
+                  <p className="m-0 text-xs text-muted">Category: {message.category}</p>
                 ) : null}
                 {message.role === 'assistant' && message.sources?.length ? (
-                  <div className="reflective-source-grid">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
                     {message.sources.map((source, index) => (
                       <VerseSourceCard key={`${source.verse_id}-${index}`} source={source} />
                     ))}
@@ -139,22 +162,22 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
             ))}
 
             {isStreaming ? (
-              <article className="reflective-bubble reflective-bubble-assistant">
-                {currentCategory ? <p className="reflective-message-meta">Category: {currentCategory}</p> : null}
+              <article className="mr-auto grid max-w-[96%] gap-3 rounded-[20px] rounded-tl-[12px] bg-assistant px-5 py-[18px] leading-[1.65] text-sanctuary-ink animate-sanctuary-fade-in md:max-w-[min(82ch,92%)]">
+                {currentCategory ? <p className="m-0 text-xs text-muted">Category: {currentCategory}</p> : null}
                 {currentStreamText ? (
-                  <div className="assistant-markdown">
+                  <div className="leading-7 text-sanctuary-ink [&_blockquote]:my-2.5 [&_blockquote]:rounded-[10px] [&_blockquote]:border-l-[3px] [&_blockquote]:border-l-[color:var(--color-sanctuary-accent)] [&_blockquote]:bg-white/80 [&_blockquote]:px-3 [&_blockquote]:py-2.5 [&_blockquote]:font-serif [&_h1]:mb-2 [&_h1]:font-serif [&_h1]:text-xl [&_h2]:mb-2 [&_h2]:font-serif [&_h2]:text-lg [&_h3]:mb-2 [&_h3]:font-serif [&_h3]:text-base [&_ol]:my-1.5 [&_ol]:ml-5 [&_p]:m-0 [&_p+p]:mt-2.5 [&_ul]:my-1.5 [&_ul]:ml-5">
                     <ReactMarkdown>{currentStreamText}</ReactMarkdown>
                   </div>
                 ) : (
-                  <div className="reflective-typing" aria-label="Assistant is thinking">
-                    <span />
-                    <span />
-                    <span />
+                  <div className="inline-flex w-fit items-center gap-1.5 rounded-full bg-sanctuary-pill px-3 py-2" aria-label="Assistant is thinking">
+                    <span className="size-[7px] rounded-full bg-[color:var(--color-sanctuary-accent)] animate-reflective-dot" />
+                    <span className="size-[7px] rounded-full bg-[color:var(--color-sanctuary-accent)] animate-reflective-dot [animation-delay:150ms]" />
+                    <span className="size-[7px] rounded-full bg-[color:var(--color-sanctuary-accent)] animate-reflective-dot [animation-delay:300ms]" />
                   </div>
                 )}
 
                 {streamingSources.length ? (
-                  <div className="reflective-source-grid">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
                     {streamingSources.map((source, index) => (
                       <VerseSourceCard key={`${source.verse_id}-${index}`} source={source} />
                     ))}
@@ -166,7 +189,7 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
         )}
       </div>
 
-      <div className="reflective-input-dock">
+      <div className="mt-0.5 md:sticky md:bottom-[18px]">
         <ChatInputBar
           query={query}
           onQueryChange={setQuery}
@@ -176,8 +199,9 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
       </div>
 
       {!isBackendReady ? (
-        <p className="muted">Backend is not ready yet. Chat will activate once health checks pass.</p>
+        <p className="text-sm text-muted">Backend is not ready yet. Chat will activate once health checks pass.</p>
       ) : null}
     </section>
   )
 }
+
