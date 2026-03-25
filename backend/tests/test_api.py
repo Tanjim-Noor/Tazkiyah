@@ -4,7 +4,7 @@ import json
 
 from fastapi.testclient import TestClient
 
-from backend.api.deps import get_rag_service
+from backend.api.deps import get_quran_api_testing_service, get_rag_service
 from backend.main import create_app
 
 
@@ -78,9 +78,73 @@ class FakeRAGService:
         ] if return_sources else []
         return {"answer": "Assalamu alaykum", "category": category, "sources": sources}
 
+
+class FakeQuranAPITestingService:
+    def resources(self, language: str | None):
+        _ = language
+        return {
+            "language": "en",
+            "translations": [
+                {
+                    "id": 20,
+                    "name": "Saheeh International",
+                    "language_name": "english",
+                    "author_name": "Saheeh",
+                }
+            ],
+            "tafsirs": [
+                {
+                    "id": 169,
+                    "name": "Tafsir Ibn Kathir",
+                    "language_name": "english",
+                    "author_name": "Ibn Kathir",
+                }
+            ],
+        }
+
+    def verse_details(self, payload):
+        _ = payload
+        return {
+            "verse_key": "13:28",
+            "requested_include": ["arabic", "translations", "metadata"],
+            "warnings": [],
+            "duration_ms": 25,
+            "data": {
+                "arabic_text": "الذين آمنوا وتطمئن قلوبهم بذكر الله",
+                "transliteration": None,
+                "translations": [
+                    {
+                        "id": 20,
+                        "name": "Saheeh International",
+                        "language_name": "english",
+                        "text": "Those who have believed and whose hearts are assured by the remembrance of Allah.",
+                    }
+                ],
+                "tafsirs": [],
+                "footnotes": [],
+                "metadata": {
+                    "surah_number": 13,
+                    "verse_number": 28,
+                    "surah_name": "Ar-Ra'd",
+                    "surah_name_arabic": "الرعد",
+                    "juz": 13,
+                    "page": 252,
+                    "hizb": 26,
+                    "rub_el_hizb": 52,
+                    "ruku": 2,
+                    "manzil": 3,
+                    "sajdah": None,
+                    "revelation_place": "madinah",
+                    "revelation_order": 96,
+                },
+                "raw": None,
+            },
+        }
+
 def _test_client() -> TestClient:
     app = create_app()
     app.dependency_overrides[get_rag_service] = lambda: FakeRAGService()
+    app.dependency_overrides[get_quran_api_testing_service] = lambda: FakeQuranAPITestingService()
     return TestClient(app)
 
 
@@ -132,4 +196,35 @@ def test_chat_sync_endpoint():
     assert body["category"] == "Factual & Informational"
     assert body["answer"] == "Assalamu alaykum"
     assert isinstance(body["sources"], list)
+
+
+def test_quran_resources_endpoint():
+    client = _test_client()
+    response = client.get("/api/v1/quran-testing/resources?language=en")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["language"] == "en"
+    assert payload["translations"][0]["id"] == 20
+    assert payload["tafsirs"][0]["id"] == 169
+
+
+def test_quran_verse_endpoint():
+    client = _test_client()
+    response = client.post(
+        "/api/v1/quran-testing/verse",
+        json={
+            "verse_key": "13:28",
+            "include": ["arabic", "translations", "metadata"],
+            "translation_ids": [20],
+            "tafsir_ids": [],
+            "language": "en",
+        },
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["verse_key"] == "13:28"
+    assert payload["data"]["arabic_text"]
+    assert payload["data"]["translations"][0]["id"] == 20
 

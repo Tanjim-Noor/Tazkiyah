@@ -112,6 +112,12 @@ export function ChatbotNewPage() {
           >
             Legacy Page
           </Link>
+          <Link
+            className="whitespace-nowrap rounded-full bg-control px-3 py-2 text-[0.82rem] text-sanctuary-action no-underline transition hover:bg-user focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sanctuary-accent"
+            to="/quran-api-testing"
+          >
+            Quran API Testing
+          </Link>
         </footer>
       </aside>
 

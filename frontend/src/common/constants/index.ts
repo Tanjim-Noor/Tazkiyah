@@ -5,6 +5,8 @@ export const API_ENDPOINTS = {
   config: `${API_PREFIX}/config`,
   chatStream: `${API_PREFIX}/chat`,
   chatSync: `${API_PREFIX}/chat/sync`,
+  quranResources: `${API_PREFIX}/quran-testing/resources`,
+  quranVerseTest: `${API_PREFIX}/quran-testing/verse`,
 } as const
 
 export const DEFAULT_CHAT_TOP_K = 5
