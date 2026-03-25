@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tazkiyah - Digital Sanctuary</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "outline-variant": "#c2c8c1",
+              "tertiary-fixed": "#d9e6db",
+              "primary-fixed-dim": "#afceb6",
+              "surface-bright": "#fcf9f2",
+              "on-error": "#ffffff",
+              "inverse-on-surface": "#f3f0e9",
+              "on-surface": "#1c1c18",
+              "surface-container": "#f1eee7",
+              "error-container": "#ffdad6",
+              "on-secondary-fixed": "#111d25",
+              "secondary-fixed-dim": "#bbc8d2",
+              "secondary": "#536069",
+              "on-secondary-container": "#59666f",
+              "on-secondary": "#ffffff",
+              "secondary-container": "#d7e4ef",
+              "tertiary-fixed-dim": "#bdcac0",
+              "on-primary-container": "#163121",
+              "inverse-surface": "#31312c",
+              "on-primary": "#ffffff",
+              "surface-container-lowest": "#ffffff",
+              "on-primary-fixed-variant": "#314d3a",
+              "on-error-container": "#93000a",
+              "tertiary": "#566159",
+              "on-tertiary-fixed": "#131e18",
+              "primary-fixed": "#caead1",
+              "on-tertiary-fixed-variant": "#3e4942",
+              "surface-tint": "#486551",
+              "surface-dim": "#dcdad3",
+              "tertiary-container": "#8a968d",
+              "surface-container-low": "#f6f3ec",
+              "surface-container-highest": "#e5e2db",
+              "on-tertiary-container": "#242e28",
+              "on-surface-variant": "#424843",
+              "secondary-fixed": "#d7e4ef",
+              "surface-container-high": "#ebe8e1",
+              "outline": "#727972",
+              "surface": "#fcf9f2",
+              "error": "#ba1a1a",
+              "on-secondary-fixed-variant": "#3c4851",
+              "primary": "#486551",
+              "on-tertiary": "#ffffff",
+              "inverse-primary": "#afceb6",
+              "background": "#fcf9f2",
+              "primary-container": "#7c9a84",
+              "on-primary-fixed": "#052011",
+              "surface-variant": "#e5e2db",
+              "on-background": "#1c1c18"
+            },
+            fontFamily: {
+              "headline": ["Noto Serif", "serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body {
+            background-color: #fcf9f2; /* Surface/Background */
+            color: #1c1c18; /* On Surface */
+            font-family: 'Inter', sans-serif;
+        }
+        .serif-text { font-family: 'Noto Serif', serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(252, 249, 242, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        /* Custom scrollbar for subtle feel */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #dcdad3; border-radius: 10px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center selection:bg-primary-fixed-dim selection:text-on-primary-fixed">
+<!-- Top Navigation Anchor (from JSON) -->
+<header class="fixed top-0 left-0 right-0 z-50 bg-[#fcf9f2]/80 dark:bg-[#1c1c18]/80 backdrop-blur-xl no-border bg-gradient-to-b from-[#fcf9f2] to-transparent">
+<div class="flex justify-between items-center w-full px-12 py-6 max-w-screen-2xl mx-auto">
+<div class="text-2xl font-serif text-[#486551] dark:text-[#afceb6] italic font-semibold tracking-tight">Tazkiyah</div>
+<nav class="hidden md:flex gap-10 items-center">
+<a class="text-[#486551] dark:text-[#afceb6] border-b-2 border-[#486551] pb-1 font-['Noto_Serif'] font-semibold tracking-tight transition-colors duration-300" href="#">Library</a>
+<a class="text-[#2F3A33]/60 dark:text-[#dcdad3]/60 font-['Noto_Serif'] font-semibold tracking-tight hover:text-[#486551] transition-colors duration-300" href="#">Reflections</a>
+<a class="text-[#2F3A33]/60 dark:text-[#dcdad3]/60 font-['Noto_Serif'] font-semibold tracking-tight hover:text-[#486551] transition-colors duration-300" href="#">Scholarship</a>
+</nav>
+<div class="flex items-center gap-6">
+<button class="material-symbols-outlined text-[#486551] hover:opacity-70 transition-opacity" data-icon="settings">settings</button>
+<button class="material-symbols-outlined text-[#486551] hover:opacity-70 transition-opacity" data-icon="account_circle">account_circle</button>
+</div>
+</div>
+</header>
+<!-- Side Navigation (from JSON) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-10 bg-[#dcdad3]/30 dark:bg-[#1c1c18]/50 backdrop-blur-md shadow-[30px_0_60px_-15px_rgba(28,28,24,0.05)] docked left-0 h-full w-72 hidden xl:flex">
+<div class="px-8 mb-12">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-white" data-icon="auto_stories" style="font-variation-settings: 'FILL' 1;">auto_stories</span>
+</div>
+<div>
+<h2 class="text-[#486551] font-serif font-bold text-lg leading-tight">Tazkiyah</h2>
+<p class="text-[10px] uppercase tracking-[0.2em] text-on-surface-variant/60 font-medium">Digital Sanctuary</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 flex flex-col">
+<div class="bg-[#ffffff]/50 dark:bg-[#ffffff]/10 text-[#486551] dark:text-white rounded-r-full py-3 pl-6 font-['Inter'] text-sm tracking-wide uppercase font-medium flex items-center gap-4 Active: translate-x-1 transition-transform">
+<span class="material-symbols-outlined text-xl" data-icon="add_circle">add_circle</span>
+                New Guidance
+            </div>
+<div class="text-[#2F3A33]/50 dark:text-[#dcdad3]/40 py-3 pl-6 font-['Inter'] text-sm tracking-wide uppercase font-medium flex items-center gap-4 hover:bg-[#ffffff]/30 dark:hover:bg-[#ffffff]/5 transition-all duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="history">history</span>
+                History
+            </div>
+<div class="text-[#2F3A33]/50 dark:text-[#dcdad3]/40 py-3 pl-6 font-['Inter'] text-sm tracking-wide uppercase font-medium flex items-center gap-4 hover:bg-[#ffffff]/30 dark:hover:bg-[#ffffff]/5 transition-all duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="auto_stories">auto_stories</span>
+                Saved Verses
+            </div>
+<div class="text-[#2F3A33]/50 dark:text-[#dcdad3]/40 py-3 pl-6 font-['Inter'] text-sm tracking-wide uppercase font-medium flex items-center gap-4 hover:bg-[#ffffff]/30 dark:hover:bg-[#ffffff]/5 transition-all duration-300">
+<span class="material-symbols-outlined text-xl" data-icon="edit_note">edit_note</span>
+                Notes
+            </div>
+</nav>
+<div class="px-8 mt-auto">
+<div class="p-4 rounded-xl bg-surface-container-highest/40 flex items-center gap-3">
+<img alt="Scholar Profile" class="w-8 h-8 rounded-full object-cover" data-alt="close-up portrait of an elderly scholarly man with a kind expression and white beard in a traditional study environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4G6As6wBMwGtDkjYzflFnoM0MifPgDfv50nNOwOKp6CWeEKaFzTUdSMezK-IZCKvJxYpoHrrlUjI2yZGDZxuP6W_oUaCqo1yj9aLrU6VllaUBg1oNVheLOZHGKe3lNVvq6A2FdfY92vYaBf98OqsXuPwF9KxkdU8IKk-5vok1tz4s0rlGlDjRZpeUBbU9471JyWUh1Dygp9fv4Xl1EP8TXW1hto7TpuusDG4lHB_xtFKUHiI3bb58e6Fe_ypa6KJVPPMJz4V916kr"/>
+<div class="text-[11px] font-medium text-on-surface/70">Connected to <br/><span class="text-[#486551]">Scholarly Logic</span></div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="flex-1 w-full max-w-3xl px-6 pt-32 pb-40 flex flex-col justify-center items-center">
+<!-- Header Branding (Editorial Center) -->
+<div class="text-center mb-16">
+<h1 class="serif-text text-5xl md:text-6xl font-bold text-primary tracking-tight mb-2">Tazkiyah</h1>
+<p class="text-on-surface-variant font-medium tracking-[0.3em] uppercase text-xs">Quranic Guidance</p>
+</div>
+<!-- Empty State / Active Prompt Panel -->
+<section class="w-full bg-surface-container-lowest p-10 md:p-14 rounded-[2rem] shadow-sm text-center">
+<h2 class="serif-text text-3xl text-on-surface mb-10 leading-relaxed italic">"What is weighing on your heart today?"</h2>
+<div class="grid gap-4 max-w-lg mx-auto">
+<button class="group flex items-center justify-between p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-300 text-left border-none">
+<span class="text-on-surface-variant text-base font-medium">I feel anxious about the future...</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+<button class="group flex items-center justify-between p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-300 text-left border-none">
+<span class="text-on-surface-variant text-base font-medium">Struggling with patience and loss...</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+<button class="group flex items-center justify-between p-5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all duration-300 text-left border-none">
+<span class="text-on-surface-variant text-base font-medium">Guidance for family tension...</span>
+<span class="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity text-primary" data-icon="arrow_forward_ios">arrow_forward_ios</span>
+</button>
+</div>
+<!-- Subtle Decorative Graphic -->
+<div class="mt-12 flex justify-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/40"></div>
+<div class="w-1.5 h-1.5 rounded-full bg-primary/20"></div>
+</div>
+</section>
+<!-- Dynamic Inspiration Card (Editorial Bento Element) -->
+<div class="mt-8 w-full grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="bg-primary-fixed-dim/30 p-6 rounded-[1.5rem] flex flex-col justify-between">
+<span class="material-symbols-outlined text-primary mb-4" data-icon="menu_book">menu_book</span>
+<p class="serif-text italic text-on-primary-fixed-variant leading-relaxed">"And He found you lost and guided [you]." — 93:7</p>
+</div>
+<div class="bg-surface-container-high p-6 rounded-[1.5rem] flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="lightbulb">lightbulb</span>
+</div>
+<p class="text-xs text-on-surface-variant leading-snug">Seek clarity through the timeless wisdom of the Surahs.</p>
+</div>
+</div>
+</main>
+<!-- Chat Composer Fixed -->
+<footer class="fixed bottom-0 left-0 right-0 w-full z-40 bg-gradient-to-t from-[#fcf9f2] via-[#fcf9f2] to-transparent pt-10 pb-8 px-6">
+<div class="max-w-3xl mx-auto relative">
+<div class="bg-surface-container-lowest shadow-2xl shadow-on-surface/5 rounded-3xl p-2 flex items-center transition-all duration-500 group focus-within:ring-1 focus-within:ring-primary/20">
+<textarea class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/40 py-4 px-6 resize-none font-body leading-relaxed" placeholder="Share your situation..." rows="1"></textarea>
+<div class="flex items-center gap-2 pr-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined text-xl" data-icon="attach_file">attach_file</span>
+</button>
+<button class="bg-gradient-to-br from-primary to-primary-container text-white w-12 h-12 flex items-center justify-center rounded-2xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+<span class="material-symbols-outlined text-2xl" data-icon="send" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] text-on-surface-variant/40 mt-3 font-medium tracking-widest uppercase">Traditional wisdom meets modern digital sanctuary</p>
+</div>
+</footer>
+<!-- Background texture Overlay -->
+<div class="fixed inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay z-[-1]" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC25Expg_kjbidhIgBsZvQwB0RPflyEvnO0cHd3Mr1WgM93UGIIVWwNdGzEzKiPANMc4HsgrfKEOCaDKQrKBN_UloX8kWnweTCofGA9_36gPaC5_906pNOPUbGDtgMIXT1__3IId9nf_zMZtNdNIGWkENgSZHnV6FrLb_0yNR5SdtxYr639sQtz_-a2Bt-ISA5UUqy9LcF9QR-tET8REu0D67AcAnL5hX2_PUwK9GIdc6gzf68iTs0vmpGHEdIeWFsToel4JBgGFc4-');"></div>
+</body></html>

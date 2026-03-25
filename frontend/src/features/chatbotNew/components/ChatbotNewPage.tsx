@@ -21,7 +21,7 @@ export function ChatbotNewPage() {
   const backendReachable = !bootstrapError && Boolean(healthQuery.data)
 
   return (
-    <main className="grid min-h-screen w-full bg-background text-foreground md:grid-cols-[304px_minmax(0,1fr)]">
+    <main className="grid min-h-screen w-full bg-background text-foreground md:grid-cols-[18rem_minmax(0,1fr)]">
       <aside className="relative flex flex-col gap-4 border-b border-border bg-panel/95 p-4 md:h-screen md:overflow-hidden md:rounded-r-[20px] md:border-r md:border-b-0 md:p-5 md:pb-28 md:shadow-[10px_0_36px_rgba(28,28,24,0.06)]">
         <div>
           <p className="text-[0.72rem] font-bold uppercase tracking-[0.08em] text-sanctuary-subtle">
@@ -113,8 +113,8 @@ export function ChatbotNewPage() {
         </footer>
       </aside>
 
-      <section className="grid min-w-0 p-3 md:h-screen md:px-[clamp(24px,4vw,56px)] md:pt-3.5 md:pb-5">
-        <div className="mx-auto grid min-h-0 w-full max-w-[1180px] grid-rows-[auto_minmax(0,1fr)] gap-3">
+      <section className="grid min-w-0 p-3 md:h-screen md:px-4 md:pt-4 md:pb-5 lg:px-6 xl:px-8">
+        <div className="mx-auto grid min-h-0 w-full max-w-[min(1400px,100%)] grid-rows-[auto_minmax(0,1fr)] gap-3">
           <section className="flex flex-wrap gap-2" aria-live="polite">
             <span
               className={`rounded-full px-2.5 py-1.5 text-xs ${
