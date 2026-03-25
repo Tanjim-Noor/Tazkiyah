@@ -1,0 +1,241 @@
+body.chatbot-new-theme {
+  --bg: #fcf9f2;
+  --panel-bg: #fbfaf7;
+  --text: #1c1c18;
+  --muted: #5f675f;
+  --border: #d6ddd7;
+  --button-bg: #e7ede8;
+  --input-bg: #ffffff;
+  --assistant-msg-bg: #f6f3ec;
+  --user-msg-bg: #d7e4ef;
+
+  background: #fcf9f2;
+  color: #1c1c18;
+}
+
+.new-chatbot-shell {
+  display: grid;
+  grid-template-columns: 304px minmax(0, 1fr);
+  width: 100%;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.sanctuary-sidebar {
+  position: relative;
+  height: 100vh;
+  border-radius: 0 20px 20px 0;
+  background: rgba(251, 250, 247, 0.96);
+  box-shadow: 10px 0 36px rgba(28, 28, 24, 0.06);
+  border-right: 1px solid rgba(194, 200, 193, 0.5);
+  padding: 20px 16px 108px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.sidebar-brand h1 {
+  margin: 2px 0 0;
+  font-family: 'Noto Serif', 'Georgia', serif;
+  font-size: 2rem;
+  color: #2f3a33;
+}
+
+.new-chatbot-eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6f7f74;
+  font-weight: 700;
+}
+
+.new-chatbot-lead {
+  margin-top: 4px;
+  color: #536069;
+  font-size: 0.95rem;
+}
+
+.sidebar-nav {
+  display: grid;
+  gap: 8px;
+}
+
+.sidebar-nav-item {
+  border: none;
+  border-radius: 12px;
+  text-align: left;
+  padding: 10px 12px;
+  background: transparent;
+  color: #4e5d53;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.sidebar-nav-item:hover {
+  background: #eef3ee;
+}
+
+.sidebar-nav-item.is-active {
+  background: #dce8dd;
+  color: #2f4d3a;
+}
+
+.new-chatbot-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sanctuary-main {
+  min-width: 0;
+  display: grid;
+  height: 100vh;
+  padding: 14px clamp(24px, 4vw, 56px) 20px;
+}
+
+.sanctuary-main-inner {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+}
+
+.new-chatbot-status-pill {
+  border-radius: 999px;
+  padding: 6px 10px;
+  background: #ebe8e1;
+  color: #425148;
+  font-size: 0.8rem;
+}
+
+.new-chatbot-status-pill.is-ok {
+  background: #e2ebe4;
+  color: #2f4d3a;
+}
+
+.new-chatbot-status-pill.is-warn {
+  background: #f5ece7;
+  color: #69483d;
+}
+
+.new-chatbot-control-panel {
+  border: 1px solid rgba(194, 200, 193, 0.48);
+  border-radius: 16px;
+  background: rgba(245, 243, 236, 0.84);
+  padding: 14px 16px;
+  box-shadow: 0 10px 24px rgba(28, 28, 24, 0.05);
+  align-content: start;
+}
+
+.new-chatbot-control-panel h2 {
+  margin: 0 0 8px;
+  font-family: 'Noto Serif', 'Georgia', serif;
+  color: #2f3a33;
+}
+
+.new-chatbot-control-row {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.new-chatbot-control-row select {
+  border: 1px solid rgba(194, 200, 193, 0.7);
+  border-radius: 10px;
+  background: #ffffff;
+  color: #1c1c18;
+  padding: 8px 10px;
+}
+
+.new-chatbot-control-panel .checkbox-label {
+  color: #2f3a33;
+}
+
+.new-chatbot-hint {
+  margin-top: 10px;
+  color: #486551;
+  font-size: 0.88rem;
+}
+
+.sidebar-footer {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 14px;
+  padding: 10px;
+  background: rgba(245, 243, 236, 0.9);
+}
+
+.profile-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #dce8dd;
+  color: #2f4d3a;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.profile-name {
+  margin: 0;
+  color: #2f3a33;
+  font-weight: 600;
+}
+
+.profile-role {
+  margin: 0;
+  color: #6f7f74;
+  font-size: 0.82rem;
+}
+
+.new-chatbot-link {
+  margin-left: auto;
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: #314d3a;
+  text-decoration: none;
+  white-space: nowrap;
+  background: #e7ede8;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 900px) {
+  .new-chatbot-shell {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+
+  .sanctuary-sidebar {
+    height: auto;
+    border-radius: 0;
+    box-shadow: none;
+    border-right: none;
+    border-bottom: 1px solid rgba(194, 200, 193, 0.5);
+    padding: 14px;
+    overflow: visible;
+  }
+
+  .sidebar-footer {
+    position: static;
+    margin-top: 6px;
+  }
+
+  .sanctuary-main {
+    height: auto;
+    min-height: 0;
+    padding: 12px;
+  }
+}

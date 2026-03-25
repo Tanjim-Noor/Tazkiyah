@@ -1,13 +1,15 @@
 import { useMemo } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
 
 import { ConfigSummary } from './components/ConfigSummary'
 import { HealthStatus } from './components/HealthStatus'
 import { useConfigQuery } from './common/hooks/useConfigQuery'
 import { useHealthQuery } from './common/hooks/useHealthQuery'
 import { Chat } from './features/chat/components/Chat'
+import { ChatbotNewPage } from './features/chatbotNew/components/ChatbotNewPage'
 import './App.css'
 
-function App() {
+function LegacyIntegrationPage() {
   const healthQuery = useHealthQuery()
   const configQuery = useConfigQuery()
 
@@ -41,6 +43,16 @@ function App() {
 
       <Chat isBackendReady={backendReachable} />
     </main>
+  )
+}
+
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<LegacyIntegrationPage />} />
+      <Route path="/chatbot-new" element={<ChatbotNewPage />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
 
