@@ -31,6 +31,11 @@
       "sourceType": "github",
       "computedHash": "28c47bcbc0e8d81f48fbbbe41d227efe4018a32c5d4674b0d052a70d215072d3"
     },
+    "expo-tailwind-setup": {
+      "source": "expo/skills",
+      "sourceType": "github",
+      "computedHash": "16c53e80cacd65369acfd8a4f5cf06a60083cc6d980127b4b2e384b81ce0e547"
+    },
     "fullstack-developer": {
       "source": "Shubhamsaboo/awesome-llm-apps",
       "sourceType": "github",
@@ -70,6 +75,11 @@
       "source": "google-labs-code/stitch-skills",
       "sourceType": "github",
       "computedHash": "cf47da05045ce0c11f1a8b21dc4ef9bbfed0122d68548a48786cb1608257d574"
+    },
+    "tailwind-design-system": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "computedHash": "0fc7b79d08ee5168d46c6887014cbe5bd02f2c5e458858470e20fc8ecedefb46"
     },
     "technical-writer": {
       "source": "Shubhamsaboo/awesome-llm-apps",
