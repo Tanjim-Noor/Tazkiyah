@@ -11,7 +11,7 @@ export function VerseSourceCard({ source }: VerseSourceCardProps) {
   }
 
   return (
-    <article className="animate-sanctuary-fade-in space-y-4 rounded-xl border-l-4 border-primary bg-surface-container-lowest p-6 shadow-sm">
+    <article className="animate-sanctuary-fade-in space-y-4 rounded-xl border-l-4 border-primary bg-white p-6 shadow-sm">
       {optionalSource.arabic_text ? (
         <p className="font-serif text-right text-2xl leading-loose tracking-wide text-primary" dir="rtl">
           {optionalSource.arabic_text}
@@ -25,15 +25,15 @@ export function VerseSourceCard({ source }: VerseSourceCardProps) {
           <span className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/60">
             {source.surah_name ?? 'Surah'} [{source.surah_number ?? '?'}:{source.verse_number ?? '?'}]
           </span>
-          <div className="flex gap-3">
-            <button aria-label="Play recitation" className="material-symbols-outlined text-sm text-primary">
-              play_circle
+          <div className="flex gap-1">
+            <button aria-label="Play recitation" className="p-1.5 text-primary">
+              <span className="material-symbols-outlined text-[20px]">play_circle</span>
             </button>
-            <button aria-label="Bookmark verse" className="material-symbols-outlined text-sm text-primary">
-              bookmark
+            <button aria-label="Bookmark verse" className="p-1.5 text-primary">
+              <span className="material-symbols-outlined text-[20px]">bookmark</span>
             </button>
-            <button aria-label="Share verse" className="material-symbols-outlined text-sm text-primary">
-              share
+            <button aria-label="Share verse" className="p-1.5 text-primary">
+              <span className="material-symbols-outlined text-[20px]">share</span>
             </button>
           </div>
         </div>

@@ -16,7 +16,7 @@ export function ChatInputBar({ query, onQueryChange, onSubmit, disabled }: ChatI
   return (
     <div>
       <form
-        className="relative flex items-end gap-3 rounded-2xl border border-outline-variant/10 bg-surface-container-lowest p-3 pr-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] transition-colors focus-within:bg-surface-container-high"
+        className="relative flex items-end gap-3 rounded-2xl bg-surface-container-lowest p-3 pr-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.05)] transition-all duration-500 focus-within:ring-1 focus-within:ring-primary/20"
         onSubmit={(event) => void handleSubmit(event)}
       >
         <button
@@ -29,7 +29,7 @@ export function ChatInputBar({ query, onQueryChange, onSubmit, disabled }: ChatI
         </button>
 
         <textarea
-          className="max-h-30 min-h-11 w-full resize-none border-0 bg-transparent py-3 text-lg text-on-surface shadow-none outline-none placeholder:text-on-surface-variant/30 focus-visible:ring-0"
+          className="max-h-30 min-h-11 w-full resize-none border-0 bg-transparent py-3 text-base text-on-surface shadow-none outline-none placeholder:text-on-surface-variant/40 focus-visible:ring-0"
           rows={1}
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
