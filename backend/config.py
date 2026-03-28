@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     vectorstore_provider: str = "chroma"
 
     llm_model: str = Field(default="gemma3:4b", alias="LLM_MODEL")
-    embedding_model: str = Field(default="nomic-embed-text-v2-moe", alias="EMBEDDING_MODEL")
+    embedding_model: str = Field(default="qwen3-embedding:8b", alias="EMBEDDING_MODEL")
     ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
 
     collection_name: str = Field(default="quran_tazkiyah_v2", alias="COLLECTION_NAME")

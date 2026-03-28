@@ -53,13 +53,13 @@ python -m tools.python.rag_v2.list_vectorstores
 Build a store with the matching model using:
 
 ```powershell
-python -m tools.python.rag_v2.build_vectorstore --embedding-model "nomic-embed-text-v2-moe"
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "qwen3-embedding:8b"
 ```
 
 The resulting directory looks like:
 
 ```text
-data/vectorstores/rag_v2/ollama/nomic-embed-text-v2-moe/quran_tazkiyah_v2
+data/vectorstores/rag_v2/ollama/qwen3-embedding-8b/quran-tazkiyah-v2
 ```
 
 When you switch models, build the target store once and then reuse it. If the model needs custom query or document prefixes, keep that logic in the pipeline and record the rule in [docs/embedding-model-switching.md](../docs/embedding-model-switching.md).

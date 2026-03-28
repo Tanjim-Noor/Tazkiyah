@@ -128,13 +128,15 @@ When you want to compare embeddings, follow this order:
 python -m tools.python.rag_v2.list_vectorstores
 
 # Build a new store for a different embedding model
-python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "qwen3-embedding:8b"
 
 # Confirm the backend is now pointing at the new path
 curl http://127.0.0.1:8000/api/v1/config
 ```
 
 If a model needs special prefixes, chunk sizes, or normalization rules, document the behavior in [docs/embedding-model-switching.md](docs/embedding-model-switching.md) and keep the implementation in one model-specific helper instead of scattering it across scripts.
+
+The current default embedding model is `qwen3-embedding:8b`.
 
 ## Usage
 

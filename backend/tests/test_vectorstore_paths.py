@@ -10,7 +10,7 @@ def test_vectorstore_directory_changes_with_embedding_model() -> None:
 
     first_path = get_vectorstore_persist_directory(
         embedding_provider="ollama",
-        embedding_model="nomic-embed-text-v2-moe",
+        embedding_model="qwen3-embedding:8b",
         collection_name="quran_tazkiyah_v2",
         root_dir=root_dir,
     )
@@ -22,7 +22,7 @@ def test_vectorstore_directory_changes_with_embedding_model() -> None:
     )
 
     assert first_path != second_path
-    assert "nomic-embed-text-v2-moe" in str(first_path)
+    assert "qwen3-embedding-8b" in str(first_path)
     assert "jina-embeddings-v2-base-en" in str(second_path)
 
 

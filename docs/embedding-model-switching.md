@@ -20,8 +20,10 @@ python -m tools.python.rag_v2.build_vectorstore
 Build a different embedding model:
 
 ```powershell
-python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "qwen3-embedding:8b"
 ```
+
+`qwen3-embedding:8b` is the current default in this workspace, so it should be the first store you expect to see after a fresh build.
 
 Verify the active path from the backend:
 
@@ -32,7 +34,7 @@ curl http://127.0.0.1:8000/api/v1/config
 ## Recommended Switch Process
 
 1. Run the list command and confirm whether the target store already exists.
-2. Set `EMBEDDING_MODEL` to the model you want to evaluate.
+2. Set `EMBEDDING_MODEL` to the model you want to evaluate. The current default is `qwen3-embedding:8b`.
 3. Leave `CHROMA_PERSIST_DIR` unset unless you need a manual override.
 4. Run the builder once for the target model if the store is missing.
 5. Restart the backend or Gradio UI and confirm `chroma_persist_dir` in `/api/v1/config`.

@@ -42,11 +42,11 @@ os.environ["LANGSMITH_ENDPOINT"] = LANGSMITH_ENDPOINT
 # Model Configuration (switchable via .env)
 # =============================================================================
 EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "ollama")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text-v2-moe")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "qwen3-embedding:8b")
 LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:4b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
-# Embedding prefixes (for nomic-embed-text-v2-moe)
+# Legacy embedding prefixes for Nomic compatibility.
 EMBED_QUERY_PREFIX = os.getenv("EMBED_QUERY_PREFIX", "search_query: ")
 EMBED_DOCUMENT_PREFIX = os.getenv("EMBED_DOCUMENT_PREFIX", "search_document: ")
 

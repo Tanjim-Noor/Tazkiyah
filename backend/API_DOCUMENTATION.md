@@ -115,8 +115,8 @@ Schema:
   "embedding_provider": "ollama",
   "vectorstore_provider": "chroma",
   "llm_model": "qwen3.5:9b",
-  "embedding_model": "jina/jina-embeddings-v2-base-en",
-  "chroma_persist_dir": "d:/work/quran project/tazkiyah/data/vectorstores/rag_v2/ollama/jina-embeddings-v2-base-en/quran_tazkiyah_v2",
+  "embedding_model": "qwen3-embedding:8b",
+  "chroma_persist_dir": "d:/work/quran project/tazkiyah/data/vectorstores/rag_v2/ollama/qwen3-embedding-8b/quran-tazkiyah-v2",
   "collection_name": "quran_tazkiyah_v2",
   "top_k": 5,
   "categories": [
