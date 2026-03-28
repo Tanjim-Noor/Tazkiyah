@@ -23,7 +23,7 @@ def category_modifier_map(settings: Settings) -> dict[str, str]:
 def build_final_prompt(*, settings: Settings, query: str, context: str, category_instruction: str) -> str:
     output_rules = (
         "Output rules:\n"
-        "1) Write a natural, seamless reply to the user which is grounded in the verse and commentary.\n" 
+        "1) Write a natural, seamless reply to the user which is grounded in the verse and commentary from the context only.\n" 
         "4) Use only verses that appear in Context. Do not cite from memory or external sources.\n"
         "5) When you include a verse, use this exact 2-line inline format:\n"
         "   \"<exact translation text from Context>\"\n"
@@ -39,7 +39,7 @@ def build_final_prompt(*, settings: Settings, query: str, context: str, category
         "If context is insufficient, clearly say so.\n\n"
         f"Context:\n{context}\n\n"
         f"User query:\n{query}\n\n"
-        "Answer with verse citations when relevant."
+        "Answer with verse citations given in the context when relevant."
     )
 
 

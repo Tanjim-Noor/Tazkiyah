@@ -1,3 +1,16 @@
+<div align="center">
+
+
+# PROJECT DEMO + CODEBASE WALKTHROUGH
+
+## Open the demo first
+
+[![Watch the walkthrough](https://img.shields.io/badge/Watch%20the%20walkthrough-Google%20Drive-1a73e8?style=for-the-badge&logo=google-drive&logoColor=white)](https://drive.google.com/file/d/1jHUGgBWAn-LgU5Yo1c6Jp-R8ZkYu5WN2/view?usp=sharing)
+
+**Basic codebase walkthrough + project demo**
+
+</div>
+
 # Tazkiyah
 
 AI-powered Quranic guidance platform that bridges daily life questions with contextually relevant Quranic verses and commentary.
