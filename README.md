@@ -27,6 +27,8 @@ The long-term product includes conversational guidance, reflection workflows, co
 - Data and retrieval tooling:
   - Quran collection and validation utilities under tools/python/collection
   - RAG v2 pipeline under tools/python/rag_v2
+  - Model-specific Chroma vector stores under data/vectorstores/rag_v2/<provider>/<model>/<collection>
+  - Vectorstore discovery CLI: `python -m tools.python.rag_v2.list_vectorstores`
 - Frontend status:
   - React + Vite scaffold exists in frontend/
   - Product UI features are in active build phase
@@ -100,6 +102,40 @@ Backend endpoints:
 - `POST /api/v1/chat` (SSE streaming)
 - `POST /api/v1/chat/sync` (JSON)
 
+### 5. Build or Rebuild a Vector Store
+
+The RAG v2 builder now resolves the Chroma directory from the embedding model, so each model gets its own store and existing stores are reused automatically.
+
+```powershell
+# Build the default model-backed store once
+python -m tools.python.rag_v2.build_vectorstore
+
+# Build a different embedding model into its own directory
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
+```
+
+### 6. Switch Embedding Models
+
+When you want to compare embeddings, follow this order:
+
+1. List the existing stores.
+2. Switch `EMBEDDING_MODEL`.
+3. Build the new store once if it does not already exist.
+4. Verify `chroma_persist_dir` in `/api/v1/config`.
+
+```powershell
+# See what is already available
+python -m tools.python.rag_v2.list_vectorstores
+
+# Build a new store for a different embedding model
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
+
+# Confirm the backend is now pointing at the new path
+curl http://127.0.0.1:8000/api/v1/config
+```
+
+If a model needs special prefixes, chunk sizes, or normalization rules, document the behavior in [docs/embedding-model-switching.md](docs/embedding-model-switching.md) and keep the implementation in one model-specific helper instead of scattering it across scripts.
+
 ## Usage
 
 ### Basic Commands
@@ -119,6 +155,12 @@ python -m tools.python.collection.collect_quran --all -t 20 --resume -o quran.js
 
 # Validate existing data
 python -m tools.python.collection.collect_quran --validate-only -o quran.jsonl
+
+# Build the vector store for the active embedding model
+python -m tools.python.rag_v2.build_vectorstore
+
+# List all already-built vectorstores
+python -m tools.python.rag_v2.list_vectorstores
 ```
 
 ### CLI Options

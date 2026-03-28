@@ -53,6 +53,7 @@ try:
     log_debug(f"RAG v2 initialized: {stats['count']} docs in '{stats['name']}'")
     log_debug(f"  Embedding: {stats['embedding_model']}")
     log_debug(f"  LLM: {stats['llm_model']}")
+    log_debug(f"  Persisted: {stats['persist_directory']}")
 
     langsmith_on = (
         config.LANGSMITH_TRACING.lower() == "true" and config.LANGSMITH_API_KEY
@@ -60,7 +61,7 @@ try:
     log_debug(f"  LangSmith: {'ON (' + config.LANGSMITH_PROJECT + ')' if langsmith_on else 'OFF'}")
 
     if stats["count"] == 0:
-        log_debug("WARNING: No documents indexed! Run: python -m rag_v2.index_data")
+        log_debug(f"WARNING: No documents indexed! Run: python -m tools.python.rag_v2.build_vectorstore --embedding-model \"{config.EMBEDDING_MODEL}\"")
 except Exception as e:
     log_debug(f"ERROR initializing RAG: {e}")
     rag = None

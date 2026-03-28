@@ -25,6 +25,10 @@ export function ConfigSummary({ config, isLoading }: ConfigSummaryProps) {
         <dd>{config.embedding_model}</dd>
       </div>
       <div>
+        <dt>Vector Store Path</dt>
+        <dd>{config.chroma_persist_dir}</dd>
+      </div>
+      <div>
         <dt>Top K</dt>
         <dd>{config.top_k}</dd>
       </div>

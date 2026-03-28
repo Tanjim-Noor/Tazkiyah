@@ -13,6 +13,7 @@ export interface ConfigResponse {
   vectorstore_provider: string
   llm_model: string
   embedding_model: string
+  chroma_persist_dir: string
   collection_name: string
   top_k: number
   categories: string[]

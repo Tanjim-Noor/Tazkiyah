@@ -24,6 +24,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 
 from tools.python.rag_v2 import config
+from tools.python.rag_v2.vectorstore_paths import get_vectorstore_persist_directory
 
 # Setup logging
 logging.basicConfig(
@@ -52,7 +53,12 @@ class TazkiyahRAGv2:
         self.embedding_model = embedding_model
         self.llm_model = llm_model
         self.collection_name = collection_name
-        self.persist_directory = persist_directory or config.CHROMA_PERSIST_DIR
+        self.persist_directory = persist_directory or get_vectorstore_persist_directory(
+            embedding_provider=config.EMBEDDING_PROVIDER,
+            embedding_model=self.embedding_model,
+            collection_name=self.collection_name,
+            root_dir=config.VECTORSTORE_ROOT_DIR,
+        )
 
         self._embeddings: Optional[OllamaEmbeddings] = None
         self._llm: Optional[ChatOllama] = None

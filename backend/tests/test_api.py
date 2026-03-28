@@ -26,6 +26,7 @@ class FakeRAGService:
             "vectorstore_provider": "chroma",
             "llm_model": "test-llm",
             "embedding_model": "test-embed",
+            "chroma_persist_dir": "d:/tmp/vectorstores/ollama/test-embed/test-collection",
             "collection_name": "test-collection",
             "top_k": 5,
             "categories": [

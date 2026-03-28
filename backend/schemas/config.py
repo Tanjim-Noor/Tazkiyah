@@ -11,6 +11,7 @@ class ConfigResponse(BaseModel):
     vectorstore_provider: str
     llm_model: str
     embedding_model: str
+    chroma_persist_dir: str
     collection_name: str
     top_k: int
     categories: list[str]

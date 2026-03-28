@@ -43,7 +43,7 @@ def main():
     stats = rag.get_collection_stats()
     if stats["count"] == 0:
         console.print("[red]No documents indexed![/red]")
-        console.print("[dim]Run: python -m rag_v2.index_data[/dim]")
+        console.print(f"[dim]Run: python -m tools.python.rag_v2.build_vectorstore --embedding-model \"{config.EMBEDDING_MODEL}\"[/dim]")
         sys.exit(1)
 
     console.print(f"[dim]Connected: {stats['count']} documents indexed[/dim]\n")

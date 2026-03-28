@@ -3,7 +3,13 @@ from __future__ import annotations
 from pathlib import Path
 
 from pydantic import Field
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from tools.python.rag_v2.vectorstore_paths import (
+    DEFAULT_VECTORSTORE_ROOT,
+    get_vectorstore_persist_directory,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -32,10 +38,11 @@ class Settings(BaseSettings):
     ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
 
     collection_name: str = Field(default="quran_tazkiyah_v2", alias="COLLECTION_NAME")
-    chroma_persist_dir: Path = Field(
-        default=PROJECT_ROOT / "data" / "vectorstores" / "rag_v2",
-        alias="CHROMA_PERSIST_DIR",
+    vectorstore_root_dir: Path = Field(
+        default=DEFAULT_VECTORSTORE_ROOT,
+        alias="VECTORSTORE_ROOT_DIR",
     )
+    chroma_persist_dir: Path | None = Field(default=None, alias="CHROMA_PERSIST_DIR")
     rag_data_file: Path = Field(
         default=PROJECT_ROOT / "data" / "processed" / "rag" / "quran_full_rag_v2.json",
         alias="RAG_DATA_FILE",
@@ -83,6 +90,21 @@ class Settings(BaseSettings):
             self.category_emotional,
             self.category_creative,
         )
+
+    @model_validator(mode="after")
+    def _resolve_vectorstore_dir(self) -> "Settings":
+        if self.chroma_persist_dir is None:
+            self.chroma_persist_dir = get_vectorstore_persist_directory(
+                embedding_provider=self.embedding_provider,
+                embedding_model=self.embedding_model,
+                collection_name=self.collection_name,
+                root_dir=self.vectorstore_root_dir,
+            )
+        else:
+            self.chroma_persist_dir = self.chroma_persist_dir.expanduser().resolve()
+
+        self.vectorstore_root_dir = self.vectorstore_root_dir.expanduser().resolve()
+        return self
 
 
 settings = Settings()

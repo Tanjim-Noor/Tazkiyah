@@ -12,6 +12,11 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from tools.python.rag_v2.vectorstore_paths import (
+    DEFAULT_VECTORSTORE_ROOT,
+    get_vectorstore_persist_directory,
+)
+
 # Load .env from project root (parent of rag_v2/)
 _PROJECT_ROOT = Path(__file__).resolve().parents[3]
 load_dotenv(_PROJECT_ROOT / ".env")
@@ -36,6 +41,7 @@ os.environ["LANGSMITH_ENDPOINT"] = LANGSMITH_ENDPOINT
 # =============================================================================
 # Model Configuration (switchable via .env)
 # =============================================================================
+EMBEDDING_PROVIDER = os.getenv("EMBEDDING_PROVIDER", "ollama")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "nomic-embed-text-v2-moe")
 LLM_MODEL = os.getenv("LLM_MODEL", "gemma3:4b")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
@@ -47,11 +53,15 @@ EMBED_DOCUMENT_PREFIX = os.getenv("EMBED_DOCUMENT_PREFIX", "search_document: ")
 # =============================================================================
 # Vector Store
 # =============================================================================
-CHROMA_PERSIST_DIR = Path(os.getenv(
-    "CHROMA_PERSIST_DIR",
-    str(_PROJECT_ROOT / "data" / "vectorstores" / "rag_v2")
-))
+VECTORSTORE_ROOT_DIR = Path(os.getenv("VECTORSTORE_ROOT_DIR", str(DEFAULT_VECTORSTORE_ROOT)))
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "quran_tazkiyah_v2")
+CHROMA_PERSIST_DIR = get_vectorstore_persist_directory(
+    embedding_provider=EMBEDDING_PROVIDER,
+    embedding_model=EMBEDDING_MODEL,
+    collection_name=COLLECTION_NAME,
+    root_dir=VECTORSTORE_ROOT_DIR,
+    explicit_persist_dir=os.getenv("CHROMA_PERSIST_DIR"),
+)
 
 # =============================================================================
 # Retrieval
