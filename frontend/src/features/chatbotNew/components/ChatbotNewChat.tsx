@@ -16,6 +16,43 @@ const EMPTY_STATE_SUGGESTIONS = [
   'I want guidance for family tension',
 ]
 
+const VERSE_KEY_PATTERN = /(\d{1,3})\s*:\s*(\d{1,3})/
+
+function normalizeVerseKey(value: string | null | undefined): string | null {
+  if (!value) return null
+  const match = value.match(VERSE_KEY_PATTERN)
+  if (!match) return null
+
+  const surah = Number.parseInt(match[1], 10)
+  const verse = Number.parseInt(match[2], 10)
+  if (Number.isNaN(surah) || Number.isNaN(verse)) return null
+
+  return `${surah}:${verse}`
+}
+
+function extractVerseKeyFromText(value: string): string | null {
+  return normalizeVerseKey(value)
+}
+
+function containsArabicText(value: string): boolean {
+  return /[\u0600-\u06FF]/.test(value)
+}
+
+function buildSourceMap(sources: SourceItem[]): Map<string, SourceItem> {
+  const sourceMap = new Map<string, SourceItem>()
+
+  for (const source of sources) {
+    const keys = [source.verse_key, source.verse_id]
+    for (const rawKey of keys) {
+      const key = normalizeVerseKey(rawKey)
+      if (!key || sourceMap.has(key)) continue
+      sourceMap.set(key, source)
+    }
+  }
+
+  return sourceMap
+}
+
 function normalizeAssistantMarkdown(content: string): string {
   const lines = content.split('\n')
 
@@ -46,12 +83,46 @@ function normalizeAssistantMarkdown(content: string): string {
   return lines.join('\n')
 }
 
+function prepareAssistantMarkdown(content: string, sources: SourceItem[]): string {
+  const normalized = normalizeAssistantMarkdown(content)
+  if (!sources.length) return normalized
+
+  const sourceMap = buildSourceMap(sources)
+  if (!sourceMap.size) return normalized
+
+  const blocks = normalized.split('\n\n')
+  const augmentedBlocks = blocks.map((block) => {
+    const lines = block.split('\n')
+    const quoteLineIndexes = lines
+      .map((line, index) => ({ line, index }))
+      .filter(({ line }) => line.trimStart().startsWith('>'))
+
+    if (!quoteLineIndexes.length) return block
+
+    const quoteText = quoteLineIndexes.map(({ line }) => line).join('\n')
+    if (containsArabicText(quoteText)) return block
+
+    const verseKey = extractVerseKeyFromText(quoteText)
+    if (!verseKey) return block
+
+    const source = sourceMap.get(verseKey)
+    if (!source?.arabic_text) return block
+
+    const insertAt = quoteLineIndexes[0].index
+    lines.splice(insertAt, 0, `> ${source.arabic_text}`)
+    return lines.join('\n')
+  })
+
+  return augmentedBlocks.join('\n\n')
+}
+
 export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
   const [query, setQuery] = useState('')
   const {
     messages,
     currentStreamText,
     currentCategory,
+    streamSources,
     isStreaming,
     error,
     fallbackStatus,
@@ -82,10 +153,12 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
   }
 
   const streamingSources = useMemo<SourceItem[]>(() => {
+    if (streamSources.length) return streamSources
+
     const assistantMessages = messages.filter((message) => message.role === 'assistant')
     const latest = assistantMessages[assistantMessages.length - 1]
     return latest?.sources ?? []
-  }, [messages])
+  }, [messages, streamSources])
 
   return (
     <section className="flex h-full min-h-0 w-full flex-col overflow-hidden">
@@ -221,7 +294,7 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
                       </p>
                     ) : null}
                     <div className="leading-relaxed text-on-surface-variant [&_blockquote]:my-4 [&_blockquote]:rounded-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:bg-white [&_blockquote]:p-6 [&_blockquote]:shadow-sm [&_blockquote]:not-italic [&_blockquote_p]:font-serif [&_blockquote_p]:italic [&_blockquote_p]:text-base [&_blockquote_p]:leading-relaxed [&_blockquote_p]:text-on-surface [&_h3]:mb-3 [&_h3]:font-serif [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-primary [&_p]:text-base [&_p]:leading-relaxed [&_p]:text-on-surface-variant [&_p+p]:mt-3 [&_strong]:font-semibold [&_strong]:text-on-surface [&_ol]:my-2 [&_ol]:ml-5 [&_ol]:space-y-1 [&_ul]:my-2 [&_ul]:ml-5 [&_ul]:space-y-1">
-                      <ReactMarkdown>{normalizeAssistantMarkdown(message.content)}</ReactMarkdown>
+                      <ReactMarkdown>{prepareAssistantMarkdown(message.content, message.sources ?? [])}</ReactMarkdown>
                     </div>
                     {message.sources?.length ? (
                       <div className="grid w-full grid-cols-1 gap-3 pt-2 sm:grid-cols-2">
@@ -259,7 +332,7 @@ export function ChatbotNewChat({ isBackendReady }: ChatbotNewChatProps) {
                   ) : null}
                   {currentStreamText ? (
                     <div className="leading-relaxed text-on-surface-variant [&_blockquote]:my-4 [&_blockquote]:rounded-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary [&_blockquote]:bg-white [&_blockquote]:p-6 [&_blockquote]:shadow-sm [&_blockquote]:not-italic [&_blockquote_p]:font-serif [&_blockquote_p]:italic [&_blockquote_p]:text-base [&_blockquote_p]:leading-relaxed [&_blockquote_p]:text-on-surface [&_h3]:mb-3 [&_h3]:font-serif [&_h3]:text-xl [&_h3]:font-bold [&_h3]:text-primary [&_p]:text-base [&_p]:leading-relaxed [&_p]:text-on-surface-variant [&_p+p]:mt-3 [&_strong]:font-semibold [&_strong]:text-on-surface [&_ol]:my-2 [&_ol]:ml-5 [&_ul]:my-2 [&_ul]:ml-5">
-                      <ReactMarkdown>{normalizeAssistantMarkdown(currentStreamText)}</ReactMarkdown>
+                      <ReactMarkdown>{prepareAssistantMarkdown(currentStreamText, streamingSources)}</ReactMarkdown>
                     </div>
                   ) : (
                     <div className="flex gap-1.5 px-1 py-2" aria-label="Assistant is thinking">

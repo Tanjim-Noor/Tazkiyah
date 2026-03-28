@@ -10,13 +10,18 @@ from backend.api.routes.configuration import router as config_router
 from backend.api.routes.health import router as health_router
 from backend.api.routes.quran_testing import router as quran_testing_router
 from backend.config import Settings, settings
+from backend.services.quran_local_lookup_service import QuranLocalLookupService
 from backend.services.quran_api_testing_service import QuranAPITestingService
 from backend.services.rag_service import RAGService
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    app.state.rag_service = RAGService(app.state.settings)
+    app.state.quran_local_lookup_service = QuranLocalLookupService(app.state.settings)
+    app.state.rag_service = RAGService(
+        app.state.settings,
+        quran_lookup_service=app.state.quran_local_lookup_service,
+    )
     app.state.quran_api_testing_service = QuranAPITestingService()
     yield
     app.state.quran_api_testing_service.close()

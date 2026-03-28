@@ -9,7 +9,7 @@ export const API_ENDPOINTS = {
   quranVerseTest: `${API_PREFIX}/quran-testing/verse`,
 } as const
 
-export const DEFAULT_CHAT_TOP_K = 5
+export const DEFAULT_CHAT_TOP_K = 3
 export const DEFAULT_CHAT_TEMPERATURE = 0.3
 
 export const CHAT_LIMITS = {

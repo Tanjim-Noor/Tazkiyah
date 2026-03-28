@@ -56,6 +56,7 @@ function isServiceUnavailableError(value: unknown): boolean {
 
 export function useChatbotNew() {
   const [state, setState] = useState<ChatState>(initialState)
+  const [streamSources, setStreamSources] = useState<SourceItem[]>([])
   const [fallbackStatus, setFallbackStatus] = useState<FallbackStatus>({
     active: false,
     message: null,
@@ -120,6 +121,7 @@ export function useChatbotNew() {
       currentStreamTextRef.current = ''
       currentCategoryRef.current = null
       clearStreamTimeout()
+      setStreamSources([])
       setFallbackStatus({ active: false, message: null })
     },
     [appendMessage, clearStreamTimeout],
@@ -140,6 +142,7 @@ export function useChatbotNew() {
 
     lastRequestRef.current = normalized
     setFallbackStatus({ active: false, message: null })
+    setStreamSources([])
 
     setState((prev) => ({
       ...prev,
@@ -222,6 +225,10 @@ export function useChatbotNew() {
           }))
         }
 
+        if (event.event === 'sources') {
+          setStreamSources(event.data.sources)
+        }
+
         if (event.event === 'done') {
           if (gotDone) continue
           gotDone = true
@@ -263,6 +270,7 @@ export function useChatbotNew() {
         setFallbackStatus({ active: false, message: null })
         currentStreamTextRef.current = ''
         currentCategoryRef.current = null
+        setStreamSources([])
         return
       }
 
@@ -309,6 +317,7 @@ export function useChatbotNew() {
         }))
         currentStreamTextRef.current = ''
         currentCategoryRef.current = null
+        setStreamSources([])
       }
     }
   }, [appendMessage, appendTrace, clearStreamTimeout, finalizeAssistant, updateDiagnostics])
@@ -335,6 +344,7 @@ export function useChatbotNew() {
   return useMemo(
     () => ({
       ...state,
+      streamSources,
       fallbackStatus,
       sendMessage,
       cancel,
@@ -342,6 +352,6 @@ export function useChatbotNew() {
       clearError,
       diagnostics: state.diagnostics,
     }),
-    [state, fallbackStatus, sendMessage, cancel, retryLastMessage, clearError],
+    [state, streamSources, fallbackStatus, sendMessage, cancel, retryLastMessage, clearError],
   )
 }

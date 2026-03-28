@@ -12,10 +12,13 @@ class ChatRequest(BaseModel):
 
 class SourceItem(BaseModel):
     verse_id: str
+    verse_key: str | None = None
     surah_name: str | None = None
     surah_number: int | None = None
     verse_number: int | None = None
     score: float | None = None
+    arabic_text: str | None = None
+    translation: str | None = None
 
 
 class ChatFinalPayload(BaseModel):

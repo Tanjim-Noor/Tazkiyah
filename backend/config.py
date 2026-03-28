@@ -40,8 +40,16 @@ class Settings(BaseSettings):
         default=PROJECT_ROOT / "data" / "processed" / "rag" / "quran_full_rag_v2.json",
         alias="RAG_DATA_FILE",
     )
+    quran_raw_data_dir: Path = Field(
+        default=PROJECT_ROOT / "data" / "raw" / "quran" / "source",
+        alias="QURAN_RAW_DATA_DIR",
+    )
+    quran_default_translation_language: str = Field(
+        default="en",
+        alias="QURAN_DEFAULT_TRANSLATION_LANGUAGE",
+    )
 
-    top_k: int = Field(default=5, alias="TOP_K")
+    top_k: int = Field(default=3, alias="TOP_K")
     min_relevance_score: float = Field(default=0.0, alias="MIN_RELEVANCE_SCORE")
 
     llm_temperature: float = Field(default=0.3, alias="LLM_TEMPERATURE")

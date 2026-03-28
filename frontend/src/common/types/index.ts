@@ -30,10 +30,13 @@ export interface ChatRequest {
 
 export interface SourceItem {
   verse_id: string
+  verse_key: string | null
   surah_name: string | null
   surah_number: number | null
   verse_number: number | null
   score: number | null
+  arabic_text: string | null
+  translation: string | null
 }
 
 export interface ChatFinalPayload {
@@ -42,10 +45,11 @@ export interface ChatFinalPayload {
   sources: SourceItem[]
 }
 
-export type SSEEventType = 'meta' | 'token' | 'done' | 'error'
+export type SSEEventType = 'meta' | 'sources' | 'token' | 'done' | 'error'
 
 export type SSEEventPayloadMap = {
   meta: { category: string }
+  sources: { sources: SourceItem[] }
   token: { text: string }
   done: ChatFinalPayload
   error: { message: string }
@@ -53,6 +57,7 @@ export type SSEEventPayloadMap = {
 
 export type SSEEvent =
   | { event: 'meta'; data: SSEEventPayloadMap['meta'] }
+  | { event: 'sources'; data: SSEEventPayloadMap['sources'] }
   | { event: 'token'; data: SSEEventPayloadMap['token'] }
   | { event: 'done'; data: SSEEventPayloadMap['done'] }
   | { event: 'error'; data: SSEEventPayloadMap['error'] }

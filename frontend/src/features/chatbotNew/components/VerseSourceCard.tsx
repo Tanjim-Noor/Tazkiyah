@@ -5,21 +5,16 @@ interface VerseSourceCardProps {
 }
 
 export function VerseSourceCard({ source }: VerseSourceCardProps) {
-  const optionalSource = source as SourceItem & {
-    arabic_text?: string | null
-    translation?: string | null
-  }
-
   return (
     <article className="animate-sanctuary-fade-in space-y-4 rounded-xl border-l-4 border-primary bg-white p-6 shadow-sm">
-      {optionalSource.arabic_text ? (
+      {source.arabic_text ? (
         <p className="font-serif text-right text-2xl leading-loose tracking-wide text-primary" dir="rtl">
-          {optionalSource.arabic_text}
+          {source.arabic_text}
         </p>
       ) : null}
       <div className="space-y-1">
         <p className="font-serif text-base leading-relaxed italic text-on-surface">
-          {optionalSource.translation ?? 'Referenced in the guidance response above.'}
+          {source.translation ?? 'Referenced in the guidance response above.'}
         </p>
         <div className="flex items-center justify-between border-t border-outline-variant/15 pt-3">
           <span className="text-xs font-semibold uppercase tracking-widest text-on-surface-variant/60">

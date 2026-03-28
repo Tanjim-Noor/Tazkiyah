@@ -1,6 +1,6 @@
 import type { SSEEvent, SSEEventType } from '../types'
 
-const VALID_EVENTS = new Set<SSEEventType>(['meta', 'token', 'done', 'error'])
+const VALID_EVENTS = new Set<SSEEventType>(['meta', 'sources', 'token', 'done', 'error'])
 
 export function parseSSEChunk(buffer: string): {
   events: SSEEvent[]
