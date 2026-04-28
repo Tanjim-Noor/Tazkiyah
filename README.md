@@ -54,17 +54,135 @@ The long-term product includes conversational guidance, reflection workflows, co
 - Progress and growth dashboard.
 - Personalized verse-of-the-day and preference adaptation.
 
-## Quick Start
+## Run the Project (Frontend + Backend) - Start Here
 
-### 1. Setup Virtual Environment
+Use this sequence first. Collection/tooling commands come later in this README.
+
+### 1. Prerequisites
+
+- Python 3.11+
+- Node.js 20+ and npm
+- Ollama
+
+### 2. Install backend dependencies
 
 ```powershell
 # Windows (PowerShell)
 cd "d:\Work\Quran Project\Tazkiyah"
 python -m venv venv
 .\venv\Scripts\Activate.ps1
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
+
+```bash
+# Linux / macOS
+cd /path/to/Tazkiyah
+python3 -m venv venv
+source venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 3. Install frontend dependencies
+
+```bash
+cd frontend
+npm install
+```
+
+### 4. Configure frontend API URL
+
+Create `frontend/.env.local`:
+
+```dotenv
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+### 5. Install and run Ollama
+
+Install Ollama (pick your OS):
+
+```powershell
+# Windows
+winget install Ollama.Ollama
+```
+
+```bash
+# macOS
+brew install ollama
+```
+
+```bash
+# Linux
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Start Ollama if it is not already running:
+
+```bash
+ollama serve
+```
+
+Pull required models:
+
+```bash
+ollama pull gemma3:4b
+ollama pull qwen3-embedding:8b
+```
+
+Verify models:
+
+```bash
+ollama list
+```
+
+### 6. Build the vector store once
+
+The backend expects a model-matched Chroma store. Build it once before running chat:
+
+```powershell
+python -m tools.python.rag_v2.build_vectorstore
+```
+
+Optional (build a store for another embedding model):
+
+```powershell
+python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
+```
+
+### 7. Run backend API
+
+```powershell
+& "d:/Work/Quran Project/Tazkiyah/venv/Scripts/python.exe" -m uvicorn backend.main:app --reload
+```
+
+Backend endpoints:
+
+- `GET /health`
+- `GET /api/v1/config`
+- `POST /api/v1/chat` (SSE streaming)
+- `POST /api/v1/chat/sync` (JSON)
+
+### 8. Run frontend app
+
+In a second terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Then open the local Vite URL shown in terminal (usually `http://127.0.0.1:5173`).
+
+### 9. Quick verification
+
+```bash
+curl http://127.0.0.1:8000/health
+curl http://127.0.0.1:8000/api/v1/config
+```
+
+If you need to override model/provider settings, create a root `.env` file and set values like `LLM_MODEL`, `EMBEDDING_MODEL`, and `OLLAMA_BASE_URL`.
 
 ## Repository Layout
 
@@ -78,80 +196,7 @@ The repository is organized as a separation-first monorepo.
 - `data/` holds raw, processed, sample, and vectorstore artifacts.
 - `docs/` contains the migration and boundary notes.
 
-```bash
-# Linux / macOS
-cd /path/to/Tazkiyah
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-### 2. List Available Resources
-
-```bash
-python -m tools.python.collection.collect_quran --list-resources
-```
-
-### 3. Collect Data
-
-```bash
-# Quick test: First 3 surahs
-python -m tools.python.collection.collect_quran --surah-range 1 3 --translations 20,85 --output test.jsonl
-
-# Full collection with tafsir
-python -m tools.python.collection.collect_quran --all --translations 20,85 --tafsirs 169 --output quran_complete.jsonl
-```
-
-### 4. Run Backend API
-
-```powershell
-& "d:/Work/Quran Project/Tazkiyah/venv/Scripts/python.exe" -m uvicorn backend.main:app --reload
-```
-
-Backend endpoints:
-
-- `GET /health`
-- `GET /api/v1/config`
-- `POST /api/v1/chat` (SSE streaming)
-- `POST /api/v1/chat/sync` (JSON)
-
-### 5. Build or Rebuild a Vector Store
-
-The RAG v2 builder now resolves the Chroma directory from the embedding model, so each model gets its own store and existing stores are reused automatically.
-
-```powershell
-# Build the default model-backed store once
-python -m tools.python.rag_v2.build_vectorstore
-
-# Build a different embedding model into its own directory
-python -m tools.python.rag_v2.build_vectorstore --embedding-model "jina/jina-embeddings-v2-base-en"
-```
-
-### 6. Switch Embedding Models
-
-When you want to compare embeddings, follow this order:
-
-1. List the existing stores.
-2. Switch `EMBEDDING_MODEL`.
-3. Build the new store once if it does not already exist.
-4. Verify `chroma_persist_dir` in `/api/v1/config`.
-
-```powershell
-# See what is already available
-python -m tools.python.rag_v2.list_vectorstores
-
-# Build a new store for a different embedding model
-python -m tools.python.rag_v2.build_vectorstore --embedding-model "qwen3-embedding:8b"
-
-# Confirm the backend is now pointing at the new path
-curl http://127.0.0.1:8000/api/v1/config
-```
-
-If a model needs special prefixes, chunk sizes, or normalization rules, document the behavior in [docs/embedding-model-switching.md](docs/embedding-model-switching.md) and keep the implementation in one model-specific helper instead of scattering it across scripts.
-
-The current default embedding model is `qwen3-embedding:8b`.
-
-## Usage
+## Data Collection and Tooling (After App Setup)
 
 ### Basic Commands
 
